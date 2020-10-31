@@ -76,3 +76,23 @@ void terminal_write(const char* data, size_t size) {
 void terminal_writestring(const char* data) {
 	terminal_write(data, strlen(data));
 }
+
+void terminal_write_string_centered(const char* string){
+    const size_t str_length = strlen(string);
+    if(str_length < VGA_WIDTH){
+        // Center text if and only if it is possible to do so.
+        // Otherwise merely print the text
+        const int skip = (VGA_WIDTH - str_length)/2;
+        terminal_column = skip;
+    }
+    terminal_writestring(string);
+    terminal_newline();
+}
+
+void terminal_print_horizontal_rule(const char symbol){
+    if(terminal_column != 0 ) terminal_newline();
+    for(size_t i=0; i<VGA_WIDTH; ++i){
+        terminal_putchar(symbol);
+    }
+    terminal_newline();
+}
