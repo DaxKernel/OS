@@ -4,5 +4,5 @@
 
 void kernel_main(void) {
 	terminal_initialize();
-	printf("Hello, kernel World!\n");
+	printf("DAX Operating System\nBuild 1.0 2020 (c)");
 }
