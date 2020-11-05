@@ -1,4 +1,7 @@
+# Build artifacts
 *.iso
 isodir
 sysroot
-.idea
+
+# IDE generated files
+.idea 
