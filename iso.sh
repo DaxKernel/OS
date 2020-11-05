@@ -11,5 +11,6 @@ cat > isodir/boot/grub/grub.cfg << EOF
 menuentry "DaxOS"{
 	multiboot /boot/DaxOS.kernel
 }
+set timeout=0
 EOF
 grub-mkrescue -o DaxOS.iso isodir
