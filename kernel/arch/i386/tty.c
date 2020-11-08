@@ -113,3 +113,11 @@ void terminal_print_horizontal_rule(const char symbol)
     }
     terminal_newline();
 }
+
+void terminal_print_success(const char *string)
+{
+    uint8_t c_color = terminal_color;
+    terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREEN, VGA_COLOR_BLACK);
+    terminal_writestring(string);
+    terminal_color = c_color;
+}

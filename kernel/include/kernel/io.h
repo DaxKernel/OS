@@ -6,6 +6,6 @@ Useful for implementing drivers
 <rmidhunsuresh@gmail.com>
 */
 
-inline unsigned char inportb(unsigned int port);
+unsigned char inportb(unsigned int port);
 
-inline void outportb(unsigned int port, unsigned char value);
+void outportb(unsigned int port, unsigned char value);
