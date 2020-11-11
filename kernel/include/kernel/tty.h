@@ -4,12 +4,12 @@
 #include <stddef.h>
 #include <stdint.h>
 
-void terminal_initialize(void);
-void terminal_putchar(char c);
-void terminal_write(const char *data, size_t size);
-void terminal_writestring(const char *data);
-void terminal_write_string_centered(const char *string);
-void terminal_print_horizontal_rule(const char symbol);
-void terminal_setcolor(uint8_t color);
-void terminal_print_success(const char *string);
+void tty_initialize(void);
+void tty_put_char(char c);
+void tty_write(const char *data, size_t size);
+void tty_write_string(const char *data);
+void tty_write_string_centered(const char *string);
+void tty_print_horizontal_rule(const char symbol);
+void tty_setcolor(uint8_t color);
+void tty_print_success(const char *string, const char *success_string);
 #endif

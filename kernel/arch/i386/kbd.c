@@ -1,5 +1,6 @@
 #include <kernel/kbd.h>
 #include <kernel/io.h>
+#include <kernel/tty.h>
 #include <stdio.h>
 
 // The following type definition does not belong here
@@ -125,7 +126,7 @@ void kbd_handle(uint8_t code)
     }
 }
 
-void kbd_set_leds(bool num, bool caps, bool scroll)
+void kbd_set_led(bool num, bool caps, bool scroll)
 {
     const int KYBRD_ENC_CMD_SET_LED = 0xED;
     uint8_t data = 0;
@@ -405,5 +406,18 @@ void kbd_draw()
             printf("data = %s\n", buf); */
             draw_character(data);
         }
+    }
+}
+
+void kbd_init()
+{
+    if (kbd_initialize())
+    {
+        tty_print_success("Keyboard Status", "OK");
+        kbd_set_led(false, false, false);
+    }
+    else
+    {
+        /* TODO: Panic */
     }
 }
