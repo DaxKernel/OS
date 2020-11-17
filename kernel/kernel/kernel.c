@@ -2,7 +2,6 @@
 #include <kernel/tty.h>
 #include <kernel/kbd.h>
 #include <d_unit/d_unit.h>
-#include <stdbool.h>
 
 void print_header()
 {
