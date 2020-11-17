@@ -31,10 +31,13 @@ KERNEL_OBJS=\
 $(KERNEL_ARCH_OBJS) \
 kernel/kernel.o \
 
+D_UNIT_OBJS=d_unit/d_unit.o
+
 OBJS=\
 $(ARCHDIR)/crti.o \
 $(ARCHDIR)/crtbegin.o \
 $(KERNEL_OBJS) \
+$(D_UNIT_OBJS) \
 $(ARCHDIR)/crtend.o \
 $(ARCHDIR)/crtn.o \
 
@@ -43,9 +46,13 @@ $(LDFLAGS) \
 $(ARCHDIR)/crti.o \
 $(ARCHDIR)/crtbegin.o \
 $(KERNEL_OBJS) \
+$(D_UNIT_OBJS) \
 $(LIBS) \
 $(ARCHDIR)/crtend.o \
 $(ARCHDIR)/crtn.o \
+
+D_UNIT_DIR=/d_unit
+D_UNIT_HEADERS=d_unit/d_unit.h
 
 .PHONY: all clean install install-headers install-kernel
 .SUFFIXES: .o .c .S
@@ -76,6 +83,9 @@ install: install-headers install-kernel
 install-headers:
 	mkdir -p $(DESTDIR)$(INCLUDEDIR)
 	cp -R --preserve=timestamps include/. $(DESTDIR)$(INCLUDEDIR)/.
+	# Install d_unit header files
+	mkdir -p $(DESTDIR)$(INCLUDEDIR)$(D_UNIT_DIR)
+	cp --preserve=timestamps $(D_UNIT_HEADERS) $(DESTDIR)$(INCLUDEDIR)$(D_UNIT_DIR)/.
 
 install-kernel: DaxOS.kernel
 	mkdir -p $(DESTDIR)$(BOOTDIR)

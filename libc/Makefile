@@ -27,6 +27,10 @@ CPPFLAGS:=$(CPPFLAGS) $(ARCH_CPPFLAGS)
 LIBK_CFLAGS:=$(LIBK_CFLAGS) $(KERNEL_ARCH_CFLAGS)
 LIBK_CPPFLAGS:=$(LIBK_CPPFLAGS) $(KERNEL_ARCH_CPPFLAGS)
 
+TESTOBJS=\
+tests/libc_test.o \
+tests/string/t_strlen.o \
+
 FREEOBJS=\
 $(ARCH_FREEOBJS) \
 stdio/printf.o \
@@ -40,6 +44,7 @@ string/memset.o \
 string/strlen.o \
 string/strcpy.o \
 string/strncpy.o \
+$(TESTOBJS) \
 
 HOSTEDOBJS=\
 $(ARCH_HOSTEDOBJS) \
@@ -86,6 +91,9 @@ install: install-headers install-libs
 install-headers:
 	mkdir -p $(DESTDIR)$(INCLUDEDIR)
 	cp -R --preserve=timestamps include/. $(DESTDIR)$(INCLUDEDIR)/.
+	# Install unit-test headers
+	mkdir -p $(DESTDIR)$(INCLUDEDIR)/tests
+	cp -R --preserve=timestamps tests/include/. $(DESTDIR)$(INCLUDEDIR)/tests
 
 install-libs: $(BINARIES)
 	mkdir -p $(DESTDIR)$(LIBDIR)

@@ -9,6 +9,12 @@ void D_UNIT_ASSERT(bool condition, const char *t_name)
         printf(t_name);
         printf("\n");
     }
+    else
+    {
+        printf("Test Passed: ");
+        printf(t_name);
+        printf("\n");
+    }
 }
 
 void D_UNIT_ASSERT_FALSE(bool condition, const char *t_name)

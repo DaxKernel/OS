@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <kernel/tty.h>
 #include <kernel/kbd.h>
+#include <d_unit/d_unit.h>
 #include <stdbool.h>
 
 void print_header()
@@ -20,5 +21,6 @@ void kernel_main(void)
 {
     init_devices();
     print_header();
+    D_UNIT_run();
     kbd_draw();
 }
