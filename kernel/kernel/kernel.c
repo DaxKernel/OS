@@ -10,7 +10,7 @@ void print_header()
     tty_print_horizontal_rule('-');
 }
 
-void init()
+void init_devices()
 {
     tty_initialize();
     kbd_init();
@@ -18,7 +18,7 @@ void init()
 
 void kernel_main(void)
 {
-    init();
+    init_devices();
     print_header();
     kbd_draw();
 }
