@@ -3,6 +3,9 @@
 #include <kernel/kbd.h>
 #include <d_unit/d_unit.h>
 
+// Comment out the follow macro definiton to disable unit tests from running
+#define D_UNIT_ENABLED
+
 void print_header()
 {
     tty_write_string_centered("DAX Operating System");
@@ -20,6 +23,9 @@ void kernel_main(void)
 {
     init_devices();
     print_header();
+#ifdef D_UNIT_ENABLED
     D_UNIT_run();
+#endif
+
     kbd_draw();
 }
