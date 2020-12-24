@@ -251,6 +251,7 @@ bool kbd_initialize()
         return false;
         break;
     }
+
     return true;
 }
 
@@ -392,21 +393,20 @@ void draw_character(uint8_t data)
 
 void kbd_draw()
 {
-    //kbd_set_scancode();
-    while (true)
+    uint8_t status = kbd_read_status();
+    if (status & KBD_STATS_MASK_OUT_BUF)
     {
-        uint8_t status = kbd_read_status();
-        if (status & KBD_STATS_MASK_OUT_BUF)
-        {
-            // printf("time to read\n");
-            uint8_t data;
-            data = kbd_read_data();
-            /* char buf[10];
-            itos(data, buf);
-            printf("data = %s\n", buf); */
-            draw_character(data);
-        }
+        // printf("time to read\n");
+        uint8_t data;
+        data = kbd_read_data();
+        draw_character(data);
     }
+}
+
+void kbd_enable_interrupts()
+{
+    /* 0xFD is 11111101 - enables only IRQ1 (keyboard)*/
+    outportb(0x21, 0xFD);
 }
 
 void kbd_init()
@@ -415,6 +415,7 @@ void kbd_init()
     {
         tty_print_success("Keyboard Status", "OK");
         kbd_set_led(false, false, false);
+        kbd_enable_interrupts();
     }
     else
     {

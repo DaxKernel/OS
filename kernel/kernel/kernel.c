@@ -2,9 +2,10 @@
 #include <kernel/tty.h>
 #include <kernel/kbd.h>
 #include <d_unit/d_unit.h>
+#include <kernel/interrupts.h>
 
 // Comment out the follow macro definiton to disable unit tests from running
-#define D_UNIT_ENABLED
+// #define D_UNIT_ENABLED
 
 void print_header()
 {
@@ -21,11 +22,10 @@ void init_devices()
 
 void kernel_main(void)
 {
+    idt_init();
     init_devices();
     print_header();
 #ifdef D_UNIT_ENABLED
     D_UNIT_run();
 #endif
-
-    kbd_draw();
 }
