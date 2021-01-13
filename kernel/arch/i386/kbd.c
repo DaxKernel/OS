@@ -1,6 +1,7 @@
 #include <kernel/kbd.h>
 #include <kernel/io.h>
 #include <kernel/tty.h>
+#include <kernel/kbd_table.h>
 #include <stdio.h>
 
 // The following type definition does not belong here
@@ -257,6 +258,8 @@ bool kbd_initialize()
 
 void print_kbd_char(char c)
 {
+    if (c == '\0')
+        return;
     if (CAPS_LOCK_STATUS)
         c -= 32;
     char str[2];
@@ -267,128 +270,8 @@ void print_kbd_char(char c)
 
 void draw_character(uint8_t data)
 {
-    switch (data)
-    {
-    case 0x1E:
-        print_kbd_char('a');
-        break;
-    case 0x30:
-        print_kbd_char('b');
-        break;
-    case 0x2e:
-        print_kbd_char('c');
-        break;
-    case 0x20:
-        print_kbd_char('d');
-        break;
-    case 0x12:
-        print_kbd_char('e');
-        break;
-    case 0x21:
-        print_kbd_char('f');
-        break;
-    case 0x22:
-        print_kbd_char('g');
-        break;
-    case 0x23:
-        print_kbd_char('h');
-        break;
-    case 0x17:
-        print_kbd_char('i');
-        break;
-    case 0x24:
-        print_kbd_char('j');
-        break;
-    case 0x25:
-        print_kbd_char('k');
-        break;
-    case 0x26:
-        print_kbd_char('l');
-        break;
-    case 0x32:
-        print_kbd_char('m');
-        break;
-    case 0x31:
-        print_kbd_char('n');
-        break;
-    case 0x18:
-        print_kbd_char('o');
-        break;
-    case 0x19:
-        print_kbd_char('p');
-        break;
-    case 0x10:
-        print_kbd_char('q');
-        break;
-    case 0x13:
-        print_kbd_char('r');
-        break;
-    case 0x1f:
-        print_kbd_char('s');
-        break;
-    case 0x14:
-        print_kbd_char('t');
-        break;
-    case 0x16:
-        print_kbd_char('u');
-        break;
-    case 0x2f:
-        print_kbd_char('v');
-        break;
-    case 0x11:
-        print_kbd_char('w');
-        break;
-    case 0x2D:
-        print_kbd_char('x');
-        break;
-    case 0x15:
-        print_kbd_char('y');
-        break;
-    case 0x2c:
-        print_kbd_char('z');
-        break;
-    case 0x02:
-        printf("1");
-        break;
-    case 0x03:
-        printf("2");
-        break;
-    case 0x04:
-        printf("3");
-        break;
-    case 0x05:
-        printf("4");
-        break;
-    case 0x06:
-        printf("5");
-        break;
-    case 0x07:
-        printf("6");
-        break;
-    case 0x08:
-        printf("7");
-        break;
-    case 0x09:
-        printf("8");
-        break;
-    case 0x0a:
-        printf("9");
-        break;
-    case 0x0b:
-        printf("0");
-        break;
-    case 0x3a:
-        CAPS_LOCK_STATUS = !CAPS_LOCK_STATUS;
-        break;
-    case 0x39:
-        printf(" ");
-        break;
-    case 0x1c:
-        printf("\n");
-        break;
-    default:
-        break;
-    }
+    char key = kbd_scan_tbl[data];
+    print_kbd_char(key);
 }
 
 void kbd_draw()
