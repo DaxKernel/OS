@@ -41,7 +41,19 @@ char itoc(int i)
     return i + '0';
 }
 
-bool CAPS_LOCK_STATUS = false;
+struct
+{
+    bool CAPS_LOCK;
+    bool NUM_LOCK;
+    bool SCROLL_LOCK;
+} KEY_STATUS;
+
+void set_key_status(bool CAPS_LOCK, bool NUM_LOCK, bool SCROLL_LOCK)
+{
+    KEY_STATUS.CAPS_LOCK = CAPS_LOCK;
+    KEY_STATUS.NUM_LOCK = NUM_LOCK;
+    KEY_STATUS.SCROLL_LOCK = SCROLL_LOCK;
+}
 
 // Returns ASCII string of integer num
 void itos(int num, char *buf)
@@ -260,7 +272,7 @@ void print_kbd_char(char c)
 {
     if (c == '\0')
         return;
-    if (CAPS_LOCK_STATUS)
+    if (KEY_STATUS.CAPS_LOCK)
         c -= 32;
     char str[2];
     str[0] = c;
@@ -268,9 +280,26 @@ void print_kbd_char(char c)
     printf(str);
 }
 
-void draw_character(uint8_t data)
+void handle_special_key_states(uint8_t scancode)
 {
-    char key = kbd_scan_tbl[data];
+    switch (scancode)
+    {
+    case 0x3a:
+        KEY_STATUS.CAPS_LOCK = !KEY_STATUS.CAPS_LOCK;
+        break;
+    case 0x45:
+        KEY_STATUS.NUM_LOCK = KEY_STATUS.NUM_LOCK;
+        break;
+    case 0x46:
+        KEY_STATUS.SCROLL_LOCK = KEY_STATUS.SCROLL_LOCK;
+        break;
+    }
+}
+
+void draw_character(uint8_t scancode)
+{
+    handle_special_key_states(scancode);
+    char key = kbd_scan_tbl[scancode];
     print_kbd_char(key);
 }
 
@@ -298,6 +327,7 @@ void kbd_init()
     {
         tty_print_success("Keyboard Status", "OK");
         kbd_set_led(false, false, false);
+        set_key_status(false, false, false);
         kbd_enable_interrupts();
     }
     else
