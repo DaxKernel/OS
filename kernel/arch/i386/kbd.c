@@ -2,6 +2,7 @@
 #include <kernel/io.h>
 #include <kernel/tty.h>
 #include <kernel/kbd_input.h>
+#include <kernel/c_buffer.h>
 #include <kernel/kbd_table.h>
 #include <stdio.h>
 
