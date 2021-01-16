@@ -21,6 +21,7 @@ LIBS:=$(LIBS) -nostdlib -lk -lgcc
 ARCHDIR=arch/$(HOSTARCH)
 
 include $(ARCHDIR)/make.config
+include $(ARCHDIR)/keyboard/make.config
 
 CFLAGS:=$(CFLAGS) $(KERNEL_ARCH_CFLAGS)
 CPPFLAGS:=$(CPPFLAGS) $(KERNEL_ARCH_CPPFLAGS)
@@ -37,6 +38,7 @@ OBJS=\
 $(ARCHDIR)/crti.o \
 $(ARCHDIR)/crtbegin.o \
 $(KERNEL_OBJS) \
+$(KBD_OBJS) \
 $(D_UNIT_OBJS) \
 $(ARCHDIR)/crtend.o \
 $(ARCHDIR)/crtn.o \
@@ -46,6 +48,7 @@ $(LDFLAGS) \
 $(ARCHDIR)/crti.o \
 $(ARCHDIR)/crtbegin.o \
 $(KERNEL_OBJS) \
+$(KBD_OBJS) \
 $(D_UNIT_OBJS) \
 $(LIBS) \
 $(ARCHDIR)/crtend.o \
