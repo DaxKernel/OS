@@ -1,4 +1,3 @@
-#include <stdbool.h>
 #include <kernel/c_buffer.h>
 #include <stdio.h>
 
