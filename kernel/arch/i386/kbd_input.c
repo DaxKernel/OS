@@ -22,3 +22,24 @@ void get_str(char *str)
     }
     *ptr = '\0';
 }
+
+void get_int(int *input)
+{
+    reset_buffer();
+    int t = 0;
+    char c;
+    while (true)
+    {
+        if (!is_buffer_empty())
+        {
+            c = read_buffer();
+            if (c != '\n')
+            {
+                t = (t * 10) + (c - '0');
+            }
+            else
+                break;
+        }
+    }
+    *input = t;
+}

@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <kernel/tty.h>
 #include <kernel/kbd.h>
+#include <kernel/kbd_input.h>
 #include <d_unit/d_unit.h>
 #include <kernel/interrupts.h>
 #include <kernel/gdt.h>
+#include <stdlib.h>
 
 // Comment out the follow macro definiton to disable unit tests from running
 #define D_UNIT_ENABLED
@@ -35,9 +37,4 @@ void kernel_main(void)
 #ifdef D_UNIT_ENABLED
     D_UNIT_run();
 #endif
-    printf("Enter string:");
-    char s[20];
-    get_str(s);
-    printf("You entered ");
-    printf(s);
 }
