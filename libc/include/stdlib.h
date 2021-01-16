@@ -4,11 +4,13 @@
 #include <sys/cdefs.h>
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-__attribute__((__noreturn__))
-void abort(void);
+    char *itoa(int, char *);
+
+    void abort(void) __attribute__((__noreturn__));
 
 #ifdef __cplusplus
 }
