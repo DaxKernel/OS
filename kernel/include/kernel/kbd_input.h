@@ -1,0 +1,1 @@
+void get_str(char *str);
