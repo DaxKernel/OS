@@ -1,6 +1,7 @@
 #include <kernel/kbd.h>
 #include <kernel/io.h>
 #include <kernel/tty.h>
+#include <kernel/kbd_input.h>
 #include <kernel/kbd_table.h>
 #include <stdio.h>
 
@@ -273,11 +274,9 @@ void print_kbd_char(char c)
     if (c == '\0')
         return;
     if (KEY_STATUS.CAPS_LOCK)
+        // Convert character to upper-case
         c -= 32;
-    char str[2];
-    str[0] = c;
-    str[1] = '\0';
-    printf(str);
+    printf("%c", c);
 }
 
 void handle_special_key_states(uint8_t scancode)
@@ -301,6 +300,8 @@ void draw_character(uint8_t scancode)
     handle_special_key_states(scancode);
     char key = kbd_scan_tbl[scancode];
     print_kbd_char(key);
+    if (key != '\0')
+        insert_buffer(key);
 }
 
 void kbd_draw()
@@ -308,7 +309,6 @@ void kbd_draw()
     uint8_t status = kbd_read_status();
     if (status & KBD_STATS_MASK_OUT_BUF)
     {
-        // printf("time to read\n");
         uint8_t data;
         data = kbd_read_data();
         draw_character(data);

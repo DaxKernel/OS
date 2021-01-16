@@ -6,7 +6,7 @@
 #include <kernel/gdt.h>
 
 // Comment out the follow macro definiton to disable unit tests from running
-// #define D_UNIT_ENABLED
+#define D_UNIT_ENABLED
 
 void print_header()
 {
@@ -35,4 +35,9 @@ void kernel_main(void)
 #ifdef D_UNIT_ENABLED
     D_UNIT_run();
 #endif
+    printf("Enter string:");
+    char s[20];
+    get_str(s);
+    printf("You entered ");
+    printf(s);
 }
