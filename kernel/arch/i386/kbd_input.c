@@ -6,13 +6,18 @@ void get_str(char *str)
     reset_buffer();
     char t = '\0';
     char *ptr = str;
-    while (t != '\n')
+    while (true)
     {
         if (!is_buffer_empty())
         {
             t = read_buffer();
-            *ptr = t;
-            ++ptr;
+            if (t != '\n')
+            {
+                *ptr = t;
+                ++ptr;
+            }
+            else
+                break;
         }
     }
     *ptr = '\0';
