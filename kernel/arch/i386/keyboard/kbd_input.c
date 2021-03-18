@@ -1,16 +1,27 @@
-#include <kernel/c_buffer.h>
+#include <kernel/k_datastruct/circular_buffer.h>
 #include <stdbool.h>
+
+static circular_buf_t cbuf;
+static unsigned char buf[15];
+
+void kbd_buffer_init(){
+    cbuf = circular_buf_init(buf, 15);
+}
+
+void kbd_insert(unsigned char key){
+    circular_buf_put(&cbuf, key);
+}
 
 void get_str(char *str)
 {
-    reset_buffer();
-    char t = '\0';
+    //reset_buffer();
+    unsigned char t = '\0';
     char *ptr = str;
     while (true)
     {
-        if (!is_buffer_empty())
+        if (!circular_buf_empty(&cbuf))
         {
-            t = read_buffer();
+            circular_buf_get(&cbuf, &t);
             if (t != '\n')
             {
                 *ptr = t;
@@ -25,14 +36,14 @@ void get_str(char *str)
 
 void get_int(int *input)
 {
-    reset_buffer();
+    //reset_buffer();
     int t = 0;
-    char c;
+    unsigned char c;
     while (true)
     {
-        if (!is_buffer_empty())
+        if (!circular_buf_empty(&cbuf))
         {
-            c = read_buffer();
+            circular_buf_get(&cbuf, &c);
             if (c != '\n')
             {
                 t = (t * 10) + (c - '0');

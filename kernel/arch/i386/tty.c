@@ -75,9 +75,21 @@ void tty_push_text_upward() {
     tty_clear_row(y);
 }
 
+void tty_backspace(){
+    if(terminal_column == 0){
+        terminal_column = VGA_WIDTH - 1;
+        terminal_row--;
+    }
+    else terminal_column--;
+
+    tty_put_entry_at(' ',terminal_color, terminal_column, terminal_row);
+}
+
 void tty_put_char(char c) {
     if (c == '\n')
         tty_newline();
+    else if(c == '\b')
+        tty_backspace();
     else
         tty_insert_char(c);
     if (terminal_row >= VGA_HEIGHT) {

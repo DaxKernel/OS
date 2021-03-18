@@ -13,7 +13,7 @@
 void print_header()
 {
     tty_write_string_centered("DAX Operating System");
-    tty_write_string_centered("Build 1.0 2020 (c)");
+    tty_write_string_centered("2021 (c)");
     tty_print_horizontal_rule('-');
 }
 

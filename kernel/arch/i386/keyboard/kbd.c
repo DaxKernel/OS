@@ -2,9 +2,9 @@
 #include <kernel/io.h>
 #include <kernel/tty.h>
 #include <kernel/kbd_input.h>
-#include <kernel/c_buffer.h>
 #include <kernel/kbd_table.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 // The following type definition does not belong here
 // Can be eliminated by implementing stddef.h
@@ -298,7 +298,7 @@ void draw_character(uint8_t scancode)
         // Capitalize key if CAPS_LOCK
         key = KEY_STATUS.CAPS_LOCK? key-32: key;
         printf("%c", key);
-        insert_buffer(key);
+        kbd_insert((unsigned char) key);
     }
    
 }
@@ -325,6 +325,7 @@ void kbd_init()
     if (kbd_initialize())
     {
         tty_print_success("Keyboard Status", "OK");
+        kbd_buffer_init();
         kbd_set_led(false, false, false);
         set_key_status(false, false, false);
         kbd_enable_interrupts();
