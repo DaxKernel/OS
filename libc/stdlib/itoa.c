@@ -16,6 +16,12 @@ char *itoa(int value, char *str)
         ptr++;
         value = value * -1;
     }
+    
+    if(value == 0){
+        *str = '0';
+        *(str+1) = '\0';
+        return str;
+    }
 
     while (value > 0 && top <= 10)
     {
