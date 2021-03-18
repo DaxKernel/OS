@@ -5,3 +5,4 @@ sysroot
 
 # IDE generated files
 .idea 
+.vscode/
