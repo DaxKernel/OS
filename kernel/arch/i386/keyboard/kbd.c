@@ -296,7 +296,7 @@ void draw_character(uint8_t scancode)
         char key = kbd_scan_tbl[scancode] ;
         if (key == '\0') return;
         // Capitalize key if CAPS_LOCK
-        key = KEY_STATUS.CAPS_LOCK? key-32: key;
+        key = KEY_STATUS.CAPS_LOCK && key != '\b'? key-32: key;
         printf("%c", key);
         kbd_insert((unsigned char) key);
     }
