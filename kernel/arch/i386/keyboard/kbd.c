@@ -270,39 +270,37 @@ bool kbd_initialize()
     return true;
 }
 
-void print_kbd_char(char c)
+bool handle_special_key_states(uint8_t scancode)
 {
-    if (c == '\0')
-        return;
-    if (KEY_STATUS.CAPS_LOCK)
-        // Convert character to upper-case
-        c -= 32;
-    printf("%c", c);
-}
-
-void handle_special_key_states(uint8_t scancode)
-{
+    
     switch (scancode)
     {
     case 0x3a:
         KEY_STATUS.CAPS_LOCK = !KEY_STATUS.CAPS_LOCK;
         break;
     case 0x45:
-        KEY_STATUS.NUM_LOCK = KEY_STATUS.NUM_LOCK;
+        KEY_STATUS.NUM_LOCK = !KEY_STATUS.NUM_LOCK;
         break;
     case 0x46:
-        KEY_STATUS.SCROLL_LOCK = KEY_STATUS.SCROLL_LOCK;
+        KEY_STATUS.SCROLL_LOCK = !KEY_STATUS.SCROLL_LOCK;
         break;
+    default:
+        return false;
     }
+    return true;
 }
 
 void draw_character(uint8_t scancode)
 {
-    handle_special_key_states(scancode);
-    char key = kbd_scan_tbl[scancode];
-    print_kbd_char(key);
-    if (key != '\0')
+    if(!handle_special_key_states(scancode)){
+        char key = kbd_scan_tbl[scancode] ;
+        if (key == '\0') return;
+        // Capitalize key if CAPS_LOCK
+        key = KEY_STATUS.CAPS_LOCK? key-32: key;
+        printf("%c", key);
         insert_buffer(key);
+    }
+   
 }
 
 void kbd_draw()
