@@ -30,12 +30,14 @@ LIBK_CPPFLAGS:=$(LIBK_CPPFLAGS) $(KERNEL_ARCH_CPPFLAGS)
 TESTOBJS=\
 tests/libc_test.o \
 tests/string/t_strlen.o \
+tests/stdlib/t_itoa.o \
 
 FREEOBJS=\
 $(ARCH_FREEOBJS) \
 stdio/printf.o \
 stdio/putchar.o \
 stdio/puts.o \
+stdio/scanf.o \
 stdlib/abort.o \
 stdlib/itoa.o \
 string/memcmp.o \

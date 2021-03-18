@@ -13,7 +13,7 @@ extern "C"
     int printf(const char *__restrict, ...);
     int putchar(int);
     int puts(const char *);
-
+    int scanf(const char *, ...);
 #ifdef __cplusplus
 }
 #endif
