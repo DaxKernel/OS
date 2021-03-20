@@ -26,6 +26,10 @@ stack_top:
 _start:
 	movl $stack_top, %esp
 
+	# Push EAX and EBX to get memory map from GRUB/Multiboot
+	pushl %eax
+	pushl %ebx
+
 	# Call the global constructors.
 	call _init
 
