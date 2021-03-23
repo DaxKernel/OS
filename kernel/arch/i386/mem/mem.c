@@ -1,26 +1,12 @@
 #include <kernel/mem/mem.h>
 #include <kernel/mem/p_stack.h>
+#include <kernel/mem/mmap.h>
 #include <stdio.h>
 
-static multiboot_info_t* mbt;
-
 extern char _kernel_end;
-
 // Size of each page frame in KB
 static const int frame_size = 4 * 1024;
-
-static const uint32_t MB = 1024 * 1024;
-
 static int stack_size = -1;
-
-void mmap_iterate(void (*func)(mmap_entry_t*)){
-  mmap_entry_t* entry = (mmap_entry_t *)mbt->mmap_addr;
-  while(entry < (mmap_entry_t*)((char *)mbt->mmap_addr + mbt->mmap_length)) {
-    if(entry->type == MULTIBOOT_MEMORY_AVAILABLE && entry->base_addr_low >= MB)
-      (*func)(entry);
-    entry = (mmap_entry_t*) ((uintptr_t) entry + entry->size + sizeof(entry->size));
-  }
-}
 
 void push_frames(mmap_entry_t *entry){
    for(int j=0; j<stack_size; ++j)
@@ -52,10 +38,6 @@ void remove_overlap(mmap_entry_t* entry){
 void parse_available_mem(){
   mmap_iterate(remove_overlap);
   stack_size = stack_size / frame_size;
-}
-
-void set_multiboot_info_t(multiboot_info_t* m){
-  mbt = m;
 }
 
 uint32_t* get_page(){
