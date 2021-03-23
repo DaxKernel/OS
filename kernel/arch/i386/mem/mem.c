@@ -13,30 +13,27 @@ static const uint32_t MB = 1024 * 1024;
 
 static int stack_size = -1;
 
-void allocate_buffer(){
-  init_stack(stack_size);
+void mmap_iterate(void (*func)(mmap_entry_t*)){
   mmap_entry_t* entry = (mmap_entry_t *)mbt->mmap_addr;
   while(entry < (mmap_entry_t*)((char *)mbt->mmap_addr + mbt->mmap_length)) {
-    if(entry->type == MULTIBOOT_MEMORY_AVAILABLE && entry->base_addr_low >= MB){
-      for(int j=0; j<stack_size; ++j)
-        push((uint32_t)((char *)entry->base_addr_low + j*frame_size));
-    }
+    if(entry->type == MULTIBOOT_MEMORY_AVAILABLE && entry->base_addr_low >= MB)
+      (*func)(entry);
     entry = (mmap_entry_t*) ((uintptr_t) entry + entry->size + sizeof(entry->size));
   }
 }
 
-void parse_available_mem(multiboot_info_t* mbt){
-  mmap_entry_t* entry = (mmap_entry_t *)mbt->mmap_addr;
-  uint32_t total_bytes = 0;
-	while(entry < (mmap_entry_t*)((char *)mbt->mmap_addr + mbt->mmap_length)) {
-    /* Does a free block of memory overlap with the region in memory
-         where we have the kernel and stack stored? 
-         If so, lets mutate the struct so that the free region starts from 
-         the end of the stack.
-      */
-    if(entry->type == MULTIBOOT_MEMORY_AVAILABLE && entry->base_addr_low >= MB){
-      
-      if(entry->base_addr_low < (uintptr_t)&_kernel_end){
+void push_frames(mmap_entry_t *entry){
+   for(int j=0; j<stack_size; ++j)
+        push((uint32_t)((char *)entry->base_addr_low + j*frame_size));
+}
+
+void allocate_buffer(){
+  init_stack(stack_size);
+  mmap_iterate(push_frames);
+}
+
+void remove_overlap(mmap_entry_t* entry){
+     if(entry->base_addr_low < (uintptr_t)&_kernel_end){
         // Calculations for adjusting kernel in memory.
         void *first_start = &_kernel_end;
         uint32_t first_length = entry->length_low - (uint32_t)((char *)first_start - (char *)entry->base_addr_low);
@@ -48,13 +45,13 @@ void parse_available_mem(multiboot_info_t* mbt){
         // TODO: This isn't precisely correct. We are kind of overallocating on the stack.
         entry->base_addr_low = (uint32_t)second_start;     
         entry->length_low = second_length;
-    
       }
-      total_bytes += entry->length_low;
-    }
-		entry = (mmap_entry_t*) ((uintptr_t) entry + entry->size + sizeof(entry->size));
-	}
-  stack_size = total_bytes / frame_size;
+      stack_size += entry->length_low;
+}
+
+void parse_available_mem(){
+  mmap_iterate(remove_overlap);
+  stack_size = stack_size / frame_size;
 }
 
 void set_multiboot_info_t(multiboot_info_t* m){
@@ -68,4 +65,3 @@ uint32_t* get_page(){
 void free_page(uint32_t *page){
   push((uint32_t)page);
 }
-
