@@ -13,24 +13,22 @@ static const uint32_t MB = 1024 * 1024;
 
 static int stack_size = -1;
 
-void allocate_buffer(){  
+void allocate_buffer(){
   init_stack(stack_size);
   mmap_entry_t* entry = (mmap_entry_t *)mbt->mmap_addr;
-  while(entry < mbt->mmap_addr + mbt->mmap_length) {
+  while(entry < (mmap_entry_t*)((char *)mbt->mmap_addr + mbt->mmap_length)) {
     if(entry->type == MULTIBOOT_MEMORY_AVAILABLE && entry->base_addr_low >= MB){
       for(int j=0; j<stack_size; ++j)
-        push((char *)entry->base_addr_low + j*frame_size);
+        push((uint32_t)((char *)entry->base_addr_low + j*frame_size));
     }
-    entry = (mmap_entry_t*) ((uint32_t) entry + entry->size + sizeof(entry->size));
+    entry = (mmap_entry_t*) ((uintptr_t) entry + entry->size + sizeof(entry->size));
   }
 }
-
-
 
 void parse_available_mem(multiboot_info_t* mbt){
   mmap_entry_t* entry = (mmap_entry_t *)mbt->mmap_addr;
   uint32_t total_bytes = 0;
-	while(entry < mbt->mmap_addr + mbt->mmap_length) {
+	while(entry < (mmap_entry_t*)((char *)mbt->mmap_addr + mbt->mmap_length)) {
     /* Does a free block of memory overlap with the region in memory
          where we have the kernel and stack stored? 
          If so, lets mutate the struct so that the free region starts from 
@@ -38,7 +36,7 @@ void parse_available_mem(multiboot_info_t* mbt){
       */
     if(entry->type == MULTIBOOT_MEMORY_AVAILABLE && entry->base_addr_low >= MB){
       
-      if(entry->base_addr_low < &_kernel_end){
+      if(entry->base_addr_low < (uintptr_t)&_kernel_end){
         // Calculations for adjusting kernel in memory.
         void *first_start = &_kernel_end;
         uint32_t first_length = entry->length_low - (uint32_t)((char *)first_start - (char *)entry->base_addr_low);
@@ -54,23 +52,9 @@ void parse_available_mem(multiboot_info_t* mbt){
       }
       total_bytes += entry->length_low;
     }
-		entry = (mmap_entry_t*) ((uint32_t) entry + entry->size + sizeof(entry->size));
+		entry = (mmap_entry_t*) ((uintptr_t) entry + entry->size + sizeof(entry->size));
 	}
   stack_size = total_bytes / frame_size;
-}
-
-
-void print_grub_mmap(){
-  mmap_entry_t* entry = (mmap_entry_t *)mbt->mmap_addr;
-  int i=0, x;
-	while(entry < mbt->mmap_addr + mbt->mmap_length) {
-        printf("Mem location #%d\n", ++i);
-        printf("base_low = %d base_high=%d\n", entry->base_addr_low, entry->base_addr_high);
-        printf("length_low = %d, length_high = %d\n", entry->length_low, entry->length_high);
-        printf("Type = %d\n\n", entry->type);
-        scanf("%d", &x);
-        entry = (mmap_entry_t*) ((uint32_t) entry + entry->size + sizeof(entry->size));
-	}
 }
 
 void set_multiboot_info_t(multiboot_info_t* m){
