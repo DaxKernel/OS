@@ -16,6 +16,8 @@ typedef struct multiboot_memory_map {
 	uint32_t type;
 } multiboot_memory_map_t;
  
-// this is really an entry, not the entire map.
 typedef multiboot_memory_map_t mmap_entry_t;
+
+void verify_multiboot(uint32_t magic, multiboot_info_t* mbt);
+
 #endif
