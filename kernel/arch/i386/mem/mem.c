@@ -2,6 +2,7 @@
 #include <kernel/mem/p_stack.h>
 #include <kernel/mem/mmap.h>
 #include <stdio.h>
+#include <stddef.h>
 
 extern char _kernel_end;
 // Size of each page frame in KB
@@ -41,9 +42,14 @@ void parse_available_mem(){
 }
 
 uint32_t* get_page(){
-  return (uint32_t *)pop();
+  int32_t mem = pop();
+  return mem == -1? NULL : (uint32_t *)mem;
 }
 
 void free_page(uint32_t *page){
   push((uint32_t)page);
+}
+
+int get_num_free_pages(){
+  return get_stack_count();
 }

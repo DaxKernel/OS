@@ -4,7 +4,7 @@
 static uint32_t *stack_start;
 static uint32_t *stack_end;
 static uint32_t *top;
-
+static uint32_t stack_count = 0;
 extern char _kernel_end;
 
 void init_stack(int stack_size){
@@ -16,9 +16,10 @@ void init_stack(int stack_size){
 }
 
 void push(uint32_t mem_addr){
-    if(top < stack_end){\
+    if(top < stack_end){
         top = top + 1;
         *top = mem_addr;
+        stack_count++;
     }
     else{
         // Stack Overflow
@@ -26,8 +27,9 @@ void push(uint32_t mem_addr){
     }
 }
 
-uint32_t pop(){
+int32_t pop(){
     if(top >= stack_start){
+        stack_count--;
         return *top--;
     }
     else{
@@ -35,6 +37,10 @@ uint32_t pop(){
         // Kernel Panic here; Out Of Memory
         return -1;
     }
+}
+
+int get_stack_count(){
+    return stack_count;
 }
 
 void print_stack(){
