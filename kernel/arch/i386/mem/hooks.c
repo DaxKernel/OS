@@ -14,11 +14,11 @@ Implement hooks needed for liballoc to function
  * \return NULL if the pages were not allocated.
  * \return A pointer to the allocated memory.
  */
-void* liballoc_alloc(int n_pages){
-    int free_count = get_num_free_pages();
+void* liballoc_alloc(size_t n_pages){
+    size_t free_count = get_num_free_pages();
     if(n_pages > free_count) return NULL;
     void *start = (void *)get_page();
-    for(int i=0; i<n_pages-1; ++i) get_page();
+    for(size_t i=0; i<n_pages-1; ++i) get_page();
     return start;
 }
 
@@ -31,9 +31,9 @@ void* liballoc_alloc(int n_pages){
  *
  * \return 0 if the memory was successfully freed.
  */
-int liballoc_free(void* start, int n_pages){
+int liballoc_free(void* start, size_t n_pages){
     void *page = start;
-    for(int i=0; i<n_pages; ++i){
+    for(size_t i=0; i<n_pages; ++i){
         free_page((uint32_t*)page);
         page = (char *)page + 4096;
     }

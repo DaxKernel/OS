@@ -4,7 +4,7 @@
 static uint32_t *stack_start;
 static uint32_t *stack_end;
 static uint32_t *top;
-static uint32_t stack_count = 0;
+static size_t stack_count = 0;
 extern char _kernel_end;
 
 void init_stack(int stack_size){
@@ -39,7 +39,7 @@ int32_t pop(){
     }
 }
 
-int get_stack_count(){
+size_t get_stack_count(){
     return stack_count;
 }
 

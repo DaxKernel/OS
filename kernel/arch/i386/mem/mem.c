@@ -50,6 +50,6 @@ void free_page(uint32_t *page){
   push((uint32_t)page);
 }
 
-int get_num_free_pages(){
+size_t get_num_free_pages(){
   return get_stack_count();
 }
