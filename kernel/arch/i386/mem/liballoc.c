@@ -235,10 +235,6 @@ static struct liballoc_major *allocate_new_page( unsigned int size )
       return maj;
 }
 
-
-	
-
-
 void *malloc(size_t req_size)
 {
 	int startedBet = 0;
@@ -584,14 +580,6 @@ void *malloc(size_t req_size)
 	return NULL;
 }
 
-
-
-
-
-
-
-
-
 void free(void *ptr)
 {
 	struct liballoc_minor *min;
@@ -717,10 +705,6 @@ void free(void *ptr)
 	liballoc_unlock();		// release the lock
 }
 
-
-
-
-
 void* calloc(size_t nobj, size_t size)
 {
        int real_size;
@@ -734,7 +718,6 @@ void* calloc(size_t nobj, size_t size)
 
        return p;
 }
-
 
 
 void*   realloc(void *p, size_t size)
@@ -827,7 +810,3 @@ void*   realloc(void *p, size_t size)
 
 	return ptr;
 }
-
-
-
-
