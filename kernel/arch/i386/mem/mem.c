@@ -1,12 +1,11 @@
 #include <kernel/mem/mem.h>
 #include <kernel/mem/p_stack.h>
 #include <kernel/mem/mmap.h>
+#include <kernel/mem/f_size.h>
 #include <stdio.h>
 #include <stddef.h>
 
 extern char _kernel_end;
-// Size of each page frame in KB
-static const int frame_size = 4 * 1024;
 static int stack_size = -1;
 
 void push_frames(mmap_entry_t *entry){

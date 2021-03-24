@@ -4,6 +4,7 @@ Implement hooks needed for liballoc to function
 
 #include <kernel/mem/liballoc.h>
 #include <kernel/mem/mem.h>
+#include <kernel/mem/f_size.h>
 #include <stddef.h>
 
 
@@ -35,7 +36,7 @@ int liballoc_free(void* start, size_t n_pages){
     void *page = start;
     for(size_t i=0; i<n_pages; ++i){
         free_page((uint32_t*)page);
-        page = (char *)page + 4096;
+        page = (char *)page + frame_size;
     }
     return 0;
 }
