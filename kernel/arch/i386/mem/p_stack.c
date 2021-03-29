@@ -5,13 +5,12 @@ static uint32_t *stack_start;
 static uint32_t *stack_end;
 static uint32_t *top;
 static size_t stack_count = 0;
-extern char _kernel_end;
+
+extern const void _kernel_end;
 
 void init_stack(int stack_size){
     stack_start = (uint32_t *)&_kernel_end;
-    //printf("Stack starts at %d\n", stack_start);
     stack_end = stack_start + stack_size;
-    //printf("Stack ends at %d\n\n", stack_end);
     top = stack_start - 1;
 }
 
