@@ -9,9 +9,9 @@ extern char _kernel_end;
 
 void init_stack(int stack_size){
     stack_start = (uint32_t *)&_kernel_end;
-    printf("Stack starts at %d\n", stack_start);
+    //printf("Stack starts at %d\n", stack_start);
     stack_end = stack_start + stack_size;
-    printf("Stack ends at %d\n\n", stack_end);
+    //printf("Stack ends at %d\n\n", stack_end);
     top = stack_start - 1;
 }
 
