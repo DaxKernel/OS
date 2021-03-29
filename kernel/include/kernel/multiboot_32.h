@@ -9,6 +9,7 @@ typedef struct multiboot_memory_map {
 	uint32_t base_addr_low,base_addr_high;
 	uint32_t length_low,length_high;
 	#define MULTIBOOT_MEMORY_AVAILABLE              1
+	#define FREE_MEMORY_OVERLAP              6	
 	uint32_t type;
 } multiboot_memory_map_t;
  

@@ -6,11 +6,21 @@
 #include <stddef.h>
 
 extern char _kernel_end;
-static int stack_size = -1;
+static int stack_size = 0;
 
 void push_frames(mmap_entry_t *entry){
-   for(int j=0; j<stack_size; ++j)
-        push((uint32_t)((char *)entry->base_addr_low + j*frame_size));
+  if(entry->type == FREE_MEMORY_OVERLAP){
+    /* If we previously marked this entry as being overlapped by the kernel,
+       we need to modify the entry to put the base_addr beyond the end of the stack
+       and subtract length by number of bytes occupied by the stack.
+    */
+    uint32_t stack_end = (uint32_t)((int *)&_kernel_end + stack_size);
+    entry->length_low -= (uint32_t)((char*)stack_end - (char*)entry->base_addr_low);
+    entry->base_addr_low = stack_end;
+  }
+  const int num_frames = entry->length_low / frame_size;
+  for(int j=0; j<num_frames; ++j)
+      push((uint32_t)((char *)entry->base_addr_low + j*frame_size));
 }
 
 void allocate_buffer(){
@@ -19,11 +29,12 @@ void allocate_buffer(){
 }
 
 void remove_overlap(mmap_entry_t* entry){
-     if(entry->base_addr_low < (uintptr_t)&_kernel_end){
-        entry->length_low -= (uint32_t)((char *)&_kernel_end - (char *)entry->base_addr_low);
-        entry->base_addr_low = (uint32_t)&_kernel_end;     
-      }
-      stack_size += entry->length_low;
+  if(entry->base_addr_low < (uintptr_t)&_kernel_end){
+    entry->length_low -= (uint32_t)((char *)&_kernel_end - (char *)entry->base_addr_low);
+    entry->base_addr_low = (uint32_t)&_kernel_end;
+    entry->type = FREE_MEMORY_OVERLAP;
+  }
+  stack_size += entry->length_low;
 }
 
 void parse_available_mem(){

@@ -20,7 +20,9 @@ static inline mmap_entry_t* next_entry(mmap_entry_t* entry){
 void mmap_iterate(void (*func)(mmap_entry_t*)){
   for(mmap_entry_t* entry = get_entry(); not_entry_end(entry); entry = next_entry(entry))
       {
-        if(entry->type == MULTIBOOT_MEMORY_AVAILABLE && entry->base_addr_low >= MB)
+        if((entry->type == MULTIBOOT_MEMORY_AVAILABLE || 
+            entry->type == FREE_MEMORY_OVERLAP) && 
+            entry->base_addr_low >= MB)
           (*func)(entry);
       }
 }
