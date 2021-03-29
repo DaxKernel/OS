@@ -8,6 +8,13 @@
 extern char _kernel_end;
 static int stack_size = 0;
 
+// Call this to set up memory management
+void init_mem(multiboot_info_t* mbt){
+    set_multiboot_info_t(mbt);
+    parse_available_mem();
+    allocate_buffer();
+}
+
 void push_frames(mmap_entry_t *entry){
   if(entry->type == FREE_MEMORY_OVERLAP){
     /* If we previously marked this entry as being overlapped by the kernel,
