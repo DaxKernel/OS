@@ -20,24 +20,28 @@ void allocate_buffer(){
 
 void remove_overlap(mmap_entry_t* entry){
      if(entry->base_addr_low < (uintptr_t)&_kernel_end){
-        // Calculations for adjusting kernel in memory.
-        void *first_start = &_kernel_end;
-        uint32_t first_length = entry->length_low - (uint32_t)((char *)first_start - (char *)entry->base_addr_low);
-
-        // Calculations for adjusting stack in memory.
-        void *second_start = (uint32_t *)first_start + (first_length / frame_size);
-        uint32_t second_length = first_length - (uint32_t)((char *)second_start - (char *)first_start);
-
-        // TODO: This isn't precisely correct. We are kind of overallocating on the stack.
-        entry->base_addr_low = (uint32_t)second_start;     
-        entry->length_low = second_length;
+        entry->length_low -= (uint32_t)((char *)&_kernel_end - (char *)entry->base_addr_low);
+        entry->base_addr_low = (uint32_t)&_kernel_end;     
       }
       stack_size += entry->length_low;
 }
 
 void parse_available_mem(){
+  /*
+  Let T be the total number of bytes of free memory after adjusting for the kernel
+  Let m the number of page frames such that when the free memory is divided into m pages,
+  it leaves exactly enough space for the stack.
+  Notice that if you have m pages, then you need a stack of size m to keep track of it.
+  Also remember that each element of stack needs sizeof(int) bytes.
+  Then we have,
+  (frame_size * m) + (m * sizeof(int)) = T
+  => 4096m + 4m = T
+  => 4100m = T
+  => m = 4100/T
+  */
+  const int sep = 4100;
   mmap_iterate(remove_overlap);
-  stack_size = stack_size / frame_size;
+  stack_size /= sep;
 }
 
 uint32_t* get_page(){
