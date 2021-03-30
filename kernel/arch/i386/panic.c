@@ -2,23 +2,18 @@
 #include <stddef.h>
 #include <stdint.h>
 
-static const size_t VGA_WIDTH = 80;
-static const size_t VGA_HEIGHT = 25;
-static size_t terminal_row = 0;
-static size_t terminal_column = 0;
-static uint8_t terminal_color;
-static uint16_t *terminal_buffer = (uint16_t *)0xB8000;
-
 enum vga_color
 {
     VGA_COLOR_RED = 4,
     VGA_COLOR_YELLOW = 14
 };
 
-static inline uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg)
-{
-    return fg | bg << 4;
-}
+static const size_t VGA_WIDTH = 80;
+static const size_t VGA_HEIGHT = 25;
+static size_t terminal_row = 0;
+static size_t terminal_column = 0;
+static uint8_t terminal_color = VGA_COLOR_YELLOW | VGA_COLOR_RED << 4;
+static uint16_t *terminal_buffer = (uint16_t *)0xB8000;
 
 static inline uint16_t vga_entry(unsigned char uc, uint8_t color)
 {
@@ -35,12 +30,6 @@ static void kp_clear()
             terminal_buffer[index] = vga_entry(' ', terminal_color);
         }
     }
-}
-
-static void kp_initialize(void)
-{
-    terminal_color = vga_entry_color(VGA_COLOR_YELLOW, VGA_COLOR_RED);
-    kp_clear();
 }
 
 static void kp_put_entry_at(unsigned char c, uint8_t color, size_t x, size_t y)
@@ -83,7 +72,7 @@ static void kp_write(const char *string)
 
 void k_panic(const char *message)
 {
-    kp_initialize();
+    kp_clear();
     const char *title = "KERNEL PANIC\n\n";
     kp_write(title);
     kp_write(message);
