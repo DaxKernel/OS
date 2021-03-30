@@ -93,11 +93,20 @@ void kp_write_centered(const char *message)
     kp_write(message);
 }
 
+void show_title()
+{
+    kp_put_char('\n');
+    kp_write_centered(" A JOB FOR   |   KERNEL   |   DAX\n");
+    kp_write_centered("Rubb3rDuck  |   PANIC    |   OS\n");
+    kp_put_char('\n');
+    kp_write_centered(" AN UNRECOVERABLE ERROR OCCURRED\n\n");
+    kp_write("--------------------------------------------------------------------------------");
+}
+
 void k_panic(const char *message)
 {
     kp_clear();
-    kp_write_centered("KERNEL PANIC\n\n");
-    kp_write("--------------------------------------------------------------------------------");
-    kp_write(message);
+    show_title();
+    kp_write_centered(message);
     block_forever();
 }
