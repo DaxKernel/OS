@@ -76,11 +76,28 @@ static inline void block_forever()
     asm("hlt");
 }
 
+void kp_write_centered(const char *message)
+{
+    // Find length of messsage
+    // Note: We cannot depend on our implementation of strlen here.
+    int len;
+    const char *ptr = message;
+    for (len = 0; *ptr != '\0'; ++ptr, ++len)
+        ;
+    // Add enough spaces at the start to center message
+    const int spacing = (VGA_WIDTH - len) / 2;
+    if (spacing > 0)
+        for (int i = 0; i < spacing; ++i)
+            kp_put_char(' ');
+    // Display string anyhow
+    kp_write(message);
+}
+
 void k_panic(const char *message)
 {
     kp_clear();
-    const char *title = "KERNEL PANIC\n\n";
-    kp_write(title);
+    kp_write_centered("KERNEL PANIC\n\n");
+    kp_write("--------------------------------------------------------------------------------");
     kp_write(message);
     block_forever();
 }
