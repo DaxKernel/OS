@@ -12,7 +12,7 @@ static uint16_t *terminal_buffer = (uint16_t *)0xB8000;
 enum vga_color
 {
     VGA_COLOR_RED = 4,
-    VGA_COLOR_LIGHT_BROWN = 14
+    VGA_COLOR_YELLOW = 14
 };
 
 static inline uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg)
@@ -39,7 +39,7 @@ static void kp_clear()
 
 static void kp_initialize(void)
 {
-    terminal_color = vga_entry_color(VGA_COLOR_LIGHT_BROWN, VGA_COLOR_RED);
+    terminal_color = vga_entry_color(VGA_COLOR_YELLOW, VGA_COLOR_RED);
     kp_clear();
 }
 
