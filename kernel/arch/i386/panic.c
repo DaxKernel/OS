@@ -4,12 +4,10 @@
 
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
-static uint16_t *const VGA_MEMORY = (uint16_t *)0xB8000;
-
 static size_t terminal_row = 0;
 static size_t terminal_column = 0;
 static uint8_t terminal_color;
-static uint16_t *terminal_buffer;
+static uint16_t *terminal_buffer = (uint16_t *)0xB8000;
 
 enum vga_color
 {
@@ -42,7 +40,6 @@ static void kp_clear()
 static void kp_initialize(void)
 {
     terminal_color = vga_entry_color(VGA_COLOR_LIGHT_BROWN, VGA_COLOR_RED);
-    terminal_buffer = VGA_MEMORY;
     kp_clear();
 }
 
