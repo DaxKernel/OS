@@ -70,12 +70,17 @@ static void kp_write(const char *string)
         kp_put_char(*ptr);
 }
 
+static inline void block_forever()
+{
+    asm("cli");
+    asm("hlt");
+}
+
 void k_panic(const char *message)
 {
     kp_clear();
     const char *title = "KERNEL PANIC\n\n";
     kp_write(title);
     kp_write(message);
-    asm("cli");
-    asm("hlt");
+    block_forever();
 }
