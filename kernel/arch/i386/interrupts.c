@@ -1,4 +1,5 @@
 #include <kernel/io.h>
+#include <stdint.h>
 
 #define IDT_SIZE 256
 
@@ -11,16 +12,28 @@ struct IDT_entry
     unsigned short int offset_higherbits;
 };
 
+struct IDT_REPRESENTATION
+{
+    uint16_t limit;
+    uintptr_t start;
+} __attribute__((packed));
+
+struct IDT_REPRESENTATION LIDT_IDT_REP;
+
 struct IDT_entry IDT[IDT_SIZE];
+
+void load_idt_(struct IDT_REPRESENTATION *rep)
+{
+    asm("lidt %0; sti;"
+        : /*No Output*/
+        : "m"(*rep));
+}
 
 void idt_init(void)
 {
     unsigned long keyboard_address;
-    unsigned long idt_address;
-    unsigned long idt_ptr[2];
 
     extern int keyboard_handler();
-    extern int load_idt();
 
     /* populate IDT entry of keyboard's interrupt */
     keyboard_address = (unsigned long)keyboard_handler;
@@ -62,9 +75,7 @@ void idt_init(void)
     outportb(0xA1, 0xff);
 
     /* fill the IDT descriptor */
-    idt_address = (unsigned long)IDT;
-    idt_ptr[0] = (sizeof(struct IDT_entry) * IDT_SIZE) + ((idt_address & 0xffff) << 16);
-    idt_ptr[1] = idt_address >> 16;
-
-    load_idt(idt_ptr);
+    LIDT_IDT_REP.limit = (sizeof(struct IDT_entry) * (IDT_SIZE - 1));
+    LIDT_IDT_REP.start = (uintptr_t)IDT;
+    load_idt_(&LIDT_IDT_REP);
 }
