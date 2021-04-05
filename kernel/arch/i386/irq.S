@@ -1,5 +1,4 @@
 .global keyboard_handler
-.global load_idt
 
 keyboard_handler:
     pusha                 
