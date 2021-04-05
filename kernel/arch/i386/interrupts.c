@@ -1,7 +1,10 @@
 #include <kernel/io.h>
 #include <stdint.h>
 
-#define IDT_SIZE 256
+enum
+{
+    IDT_SIZE = 256
+};
 
 struct IDT_entry
 {
@@ -22,7 +25,7 @@ struct IDT_REPRESENTATION LIDT_IDT_REP;
 
 struct IDT_entry IDT[IDT_SIZE];
 
-void load_idt_(struct IDT_REPRESENTATION *rep)
+void load_idt(struct IDT_REPRESENTATION *rep)
 {
     asm("lidt %0; sti;"
         : /*No Output*/
@@ -77,5 +80,5 @@ void idt_init(void)
     /* fill the IDT descriptor */
     LIDT_IDT_REP.limit = (sizeof(struct IDT_entry) * (IDT_SIZE - 1));
     LIDT_IDT_REP.start = (uintptr_t)IDT;
-    load_idt_(&LIDT_IDT_REP);
+    load_idt(&LIDT_IDT_REP);
 }
