@@ -8,12 +8,12 @@ enum
 
 struct IDT_entry
 {
-    unsigned short int offset_lowerbits;
-    unsigned short int selector;
+    uint16_t offset_lowerbits;
+    uint16_t selector;
     unsigned char zero;
     unsigned char type_attr;
-    unsigned short int offset_higherbits;
-};
+    uint16_t offset_higherbits;
+} IDT[IDT_SIZE];
 
 struct IDT_REPRESENTATION
 {
@@ -22,8 +22,6 @@ struct IDT_REPRESENTATION
 } __attribute__((packed));
 
 struct IDT_REPRESENTATION LIDT_IDT_REP;
-
-struct IDT_entry IDT[IDT_SIZE];
 
 void load_idt(struct IDT_REPRESENTATION *rep)
 {
