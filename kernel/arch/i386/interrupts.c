@@ -15,19 +15,19 @@ struct IDT_entry
     uint16_t offset_higherbits;
 } IDT[IDT_SIZE];
 
-struct IDT_REPRESENTATION
+static inline void load_idt()
 {
-    uint16_t limit;
-    uintptr_t start;
-} __attribute__((packed));
+    typedef struct __attribute__((packed))
+    {
+        uint16_t limit;
+        uintptr_t start;
+    } IDT_REPRESENTATION;
 
-struct IDT_REPRESENTATION LIDT_IDT_REP;
+    const IDT_REPRESENTATION rep = {(sizeof(struct IDT_entry) * (IDT_SIZE - 1)), (uintptr_t)IDT};
 
-void load_idt(struct IDT_REPRESENTATION *rep)
-{
     asm("lidt %0; sti;"
         : /*No Output*/
-        : "m"(*rep));
+        : "m"(*(IDT_REPRESENTATION *)&rep));
 }
 
 void idt_init(void)
@@ -76,7 +76,5 @@ void idt_init(void)
     outportb(0xA1, 0xff);
 
     /* fill the IDT descriptor */
-    LIDT_IDT_REP.limit = (sizeof(struct IDT_entry) * (IDT_SIZE - 1));
-    LIDT_IDT_REP.start = (uintptr_t)IDT;
-    load_idt(&LIDT_IDT_REP);
+    load_idt();
 }
