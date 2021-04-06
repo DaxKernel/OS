@@ -1,6 +1,6 @@
 #include <kernel/io.h>
 #include <stdint.h>
-#include <kernel/irq_handlers.h>
+#include <kernel/interrupts/irq_handlers.h>
 
 enum
 {
