@@ -3,7 +3,7 @@
 #include <kernel/kbd.h>
 #include <kernel/kbd_input.h>
 #include <d_unit/d_unit.h>
-#include <kernel/interrupts/interrupts.h>
+#include <kernel/interrupt/interrupts.h>
 #include <kernel/gdt.h>
 #include <stdlib.h>
 
