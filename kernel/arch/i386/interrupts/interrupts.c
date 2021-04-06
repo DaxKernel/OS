@@ -43,7 +43,7 @@ void add_interrupt(const int intr, uint32_t handler)
 
 void idt_init(void)
 {
-    add_interrupt(0x21, (uint32_t)keyboard_handler_main);
+    add_interrupt(0x21, (uint32_t)keyboard_handler);
 
     /*     Ports
 	*	 PIC1	PIC2

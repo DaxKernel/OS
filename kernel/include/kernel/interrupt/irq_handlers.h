@@ -13,5 +13,5 @@ struct interrupt_frame
 #define IRQ_HANDLER __attribute__((interrupt)) void
 #define IRQ_ARG __attribute__((unused)) struct interrupt_frame *frame
 
-void keyboard_handler_main();
+void keyboard_handler();
 #endif
