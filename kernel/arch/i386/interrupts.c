@@ -1,5 +1,6 @@
 #include <kernel/io.h>
 #include <stdint.h>
+#include <kernel/irq_handlers.h>
 
 enum
 {
@@ -32,17 +33,12 @@ static inline void load_idt()
 
 void idt_init(void)
 {
-    unsigned long keyboard_address;
-
-    extern int keyboard_handler();
-
     /* populate IDT entry of keyboard's interrupt */
-    keyboard_address = (unsigned long)keyboard_handler;
-    IDT[0x21].offset_lowerbits = keyboard_address & 0xffff;
+    IDT[0x21].offset_lowerbits = (uint32_t)keyboard_handler_main & 0xffff;
     IDT[0x21].selector = 0x08; /* KERNEL_CODE_SEGMENT_OFFSET */
     IDT[0x21].zero = 0;
     IDT[0x21].type_attr = 0x8e; /* INTERRUPT_GATE */
-    IDT[0x21].offset_higherbits = (keyboard_address & 0xffff0000) >> 16;
+    IDT[0x21].offset_higherbits = (uint32_t)keyboard_handler_main >> 16;
 
     /*     Ports
 	*	 PIC1	PIC2
