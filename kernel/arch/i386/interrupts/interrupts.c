@@ -31,14 +31,19 @@ static inline void load_idt()
         : "m"(*(IDT_REPRESENTATION *)&rep));
 }
 
-void idt_init(void)
+void add_interrupt(const int intr, uint32_t handler)
 {
     /* populate IDT entry of keyboard's interrupt */
-    IDT[0x21].offset_lowerbits = (uint32_t)keyboard_handler_main & 0xffff;
-    IDT[0x21].selector = 0x08; /* KERNEL_CODE_SEGMENT_OFFSET */
-    IDT[0x21].zero = 0;
-    IDT[0x21].type_attr = 0x8e; /* INTERRUPT_GATE */
-    IDT[0x21].offset_higherbits = (uint32_t)keyboard_handler_main >> 16;
+    IDT[intr].offset_lowerbits = (uint32_t)handler & 0xffff;
+    IDT[intr].selector = 0x08; /* KERNEL_CODE_SEGMENT_OFFSET */
+    IDT[intr].zero = 0;
+    IDT[intr].type_attr = 0x8e; /* INTERRUPT_GATE */
+    IDT[intr].offset_higherbits = (uint32_t)handler >> 16;
+}
+
+void idt_init(void)
+{
+    add_interrupt(0x21, (uint32_t)keyboard_handler_main);
 
     /*     Ports
 	*	 PIC1	PIC2
