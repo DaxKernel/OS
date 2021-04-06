@@ -1,1 +1,1 @@
-void keyboard_handler_main(void);
+void keyboard_handler_main();
