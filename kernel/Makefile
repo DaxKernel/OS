@@ -23,6 +23,7 @@ ARCHDIR=arch/$(HOSTARCH)
 include $(ARCHDIR)/make.config
 include $(ARCHDIR)/keyboard/make.config
 include $(ARCHDIR)/k_datastruct/make.config
+include $(ARCHDIR)/interrupts/make.config
 
 CFLAGS:=$(CFLAGS) $(KERNEL_ARCH_CFLAGS)
 CPPFLAGS:=$(CPPFLAGS) $(KERNEL_ARCH_CPPFLAGS)
@@ -39,6 +40,7 @@ OBJS=\
 $(ARCHDIR)/crti.o \
 $(ARCHDIR)/crtbegin.o \
 $(KERNEL_OBJS) \
+$(INTRPTS_OBJ) \
 $(KBD_OBJS) \
 $(K_DATASTRUCT_OBJS) \
 $(D_UNIT_OBJS) \
@@ -50,6 +52,7 @@ $(LDFLAGS) \
 $(ARCHDIR)/crti.o \
 $(ARCHDIR)/crtbegin.o \
 $(KERNEL_OBJS) \
+$(INTRPTS_OBJ) \
 $(KBD_OBJS) \
 $(K_DATASTRUCT_OBJS) \
 $(D_UNIT_OBJS) \
