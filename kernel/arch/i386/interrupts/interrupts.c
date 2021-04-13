@@ -38,12 +38,11 @@ void add_interrupt(const int intr, uint32_t handler)
     IDT[intr].selector = 0x08; /* KERNEL_CODE_SEGMENT_OFFSET */
     IDT[intr].zero = 0;
     IDT[intr].type_attr = 0x8e; /* INTERRUPT_GATE */
-    IDT[intr].offset_higherbits = (uint32_t)handler >> 16;
+    IDT[intr].offset_higherbits = ((uint32_t)handler & 0xffff0000) >> 16;
 }
 
 void idt_init(void)
 {
-    add_interrupt(0x21, (uint32_t)keyboard_handler);
 
     /*     Ports
 	*	 PIC1	PIC2
@@ -77,5 +76,10 @@ void idt_init(void)
     outportb(0xA1, 0xff);
 
     /* fill the IDT descriptor */
+    add_interrupt(0x21, (uint32_t)keyboard_handler);
+
+    /* Divide by zero - CPU Exception */
+    add_interrupt(0x0, (uint32_t)divide_by_zero);
+
     load_idt();
 }

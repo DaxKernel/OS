@@ -14,4 +14,6 @@ struct interrupt_frame
 #define IRQ_ARG __attribute__((unused)) struct interrupt_frame *frame
 
 void keyboard_handler();
+IRQ_HANDLER divide_by_zero(IRQ_ARG);
+
 #endif
