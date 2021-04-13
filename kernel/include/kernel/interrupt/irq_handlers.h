@@ -13,7 +13,7 @@ struct interrupt_frame
 #define IRQ_HANDLER __attribute__((interrupt)) void
 #define IRQ_ARG __attribute__((unused)) struct interrupt_frame *frame
 
-void keyboard_handler();
+IRQ_HANDLER keyboard_handler(IRQ_ARG);
 IRQ_HANDLER divide_by_zero(IRQ_ARG);
 
 #endif
