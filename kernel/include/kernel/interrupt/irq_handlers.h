@@ -2,6 +2,7 @@
 #define IRQ_HANDLERS_H
 
 #include <stdint.h>
+
 struct interrupt_frame
 {
     uint32_t error_code;
