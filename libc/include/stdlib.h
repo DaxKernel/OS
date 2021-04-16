@@ -10,6 +10,7 @@ extern "C"
 #endif
 
     char *itoa(int, char *);
+    char *uitoa(unsigned int, char *);
 
     void abort(void) __attribute__((__noreturn__));
 

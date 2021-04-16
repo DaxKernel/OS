@@ -31,6 +31,7 @@ TESTOBJS=\
 tests/libc_test.o \
 tests/string/t_strlen.o \
 tests/stdlib/t_itoa.o \
+tests/mem/mem_test.o
 
 FREEOBJS=\
 $(ARCH_FREEOBJS) \
