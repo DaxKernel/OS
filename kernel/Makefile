@@ -38,21 +38,21 @@ kernel/kernel.o \
 D_UNIT_OBJS=d_unit/d_unit.o
 
 OBJS=\
-$(ARCHDIR)/crti.o \
-$(ARCHDIR)/crtbegin.o \
+$(ARCHDIR)/boot/crti.o \
+$(ARCHDIR)/boot/crtbegin.o \
 $(KERNEL_OBJS) \
 $(INTRPTS_OBJ) \
 $(KBD_OBJS) \
 $(K_DATASTRUCT_OBJS) \
 $(MEM_OBJS) \
 $(D_UNIT_OBJS) \
-$(ARCHDIR)/crtend.o \
-$(ARCHDIR)/crtn.o \
+$(ARCHDIR)/boot/crtend.o \
+$(ARCHDIR)/boot/crtn.o \
 
 LINK_LIST=\
 $(LDFLAGS) \
-$(ARCHDIR)/crti.o \
-$(ARCHDIR)/crtbegin.o \
+$(ARCHDIR)/boot/crti.o \
+$(ARCHDIR)/boot/crtbegin.o \
 $(KERNEL_OBJS) \
 $(INTRPTS_OBJ) \
 $(KBD_OBJS) \
@@ -60,8 +60,8 @@ $(K_DATASTRUCT_OBJS) \
 $(MEM_OBJS) \
 $(D_UNIT_OBJS) \
 $(LIBS) \
-$(ARCHDIR)/crtend.o \
-$(ARCHDIR)/crtn.o \
+$(ARCHDIR)/boot/crtend.o \
+$(ARCHDIR)/boot/crtn.o \
 
 D_UNIT_DIR=/d_unit
 D_UNIT_HEADERS=d_unit/d_unit.h
@@ -76,7 +76,7 @@ DaxOS.kernel: $(OBJS) $(ARCHDIR)/linker.ld
 	grub-file --is-x86-multiboot DaxOS.kernel
 
 # Generate crtbegin.o and crtend.o from the compiler
-$(ARCHDIR)/crtbegin.o $(ARCHDIR)/crtend.o:
+$(ARCHDIR)/boot/crtbegin.o $(ARCHDIR)/boot/crtend.o:
 	OBJ=`$(CC) $(CFLAGS) $(LDFLAGS) -print-file-name=$(@F)` && cp "$$OBJ" $@
 
 .c.o:
