@@ -55,7 +55,7 @@ void gdt_init()
 {
     /* Setup the GDT pointer and limit */
     gp.limit = (sizeof(struct gdt_entry) * 3) - 1;
-    gp.base = &gdt;
+    gp.base = (unsigned int)&gdt;
 
     /* Our NULL descriptor
        This descriptor is necessary as per standard.
