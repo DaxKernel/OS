@@ -2,7 +2,7 @@
 #include <kernel/tty.h>
 #include <kernel/kbd.h>
 #include <d_unit/d_unit.h>
-#include <kernel/interrupts.h>
+#include <kernel/interrupt/interrupts.h>
 #include <kernel/gdt.h>
 #include <kernel/multiboot_32.h>
 #include <kernel/mem/mem.h>
