@@ -8,6 +8,8 @@ void D_UNIT_run()
     D_TEST_strlen_on_empty_string();
     D_TEST_strlen_on_normal_string();
     D_TEST_itoa_zero();
+    // Memory
     D_TEST_dynamic_array_10();
     D_TEST_unfulfillable_request();
+    D_TEST_malloc_span_multiple_pages();
 }

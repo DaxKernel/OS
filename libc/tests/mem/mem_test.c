@@ -14,6 +14,15 @@ void D_TEST_dynamic_array_10()
 
 void D_TEST_unfulfillable_request()
 {
-    char *p = malloc((size_t)-1);
+    char *p = malloc(/* Quick way to get SIZE_MAX*/ (size_t)-1);
     D_UNIT_ASSERT_FALSE(p, "MEM/UNFULFILLABLE_MEM_REQUEST");
+}
+
+void D_TEST_malloc_span_multiple_pages()
+{
+    char *p = malloc(4096 * 5);
+    char *q = malloc(1);
+    D_UNIT_ASSERT(q > p + 4096, "MEM/REQUEST_SPAN_OVER_MULTIPLE_PAGES");
+    free(p);
+    free(q);
 }
