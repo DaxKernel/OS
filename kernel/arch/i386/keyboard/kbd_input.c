@@ -29,6 +29,8 @@ void get_str(char *str)
                 *ptr = t;
                 ++ptr;
             }
+            else if (t == '\b')
+                --ptr;
             else
                 break;
         }
