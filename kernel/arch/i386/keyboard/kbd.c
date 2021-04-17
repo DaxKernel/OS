@@ -5,10 +5,8 @@
 #include <kernel/kbd_table.h>
 #include <stdio.h>
 #include <stdbool.h>
-
-// The following type definition does not belong here
-// Can be eliminated by implementing stddef.h
-typedef unsigned char uint8_t;
+#include <stdlib.h>
+#include <stdint.h>
 
 // Data I/O must accessed through port 0x60
 enum KBD_DATA_IO
@@ -55,27 +53,6 @@ void set_key_status(bool CAPS_LOCK, bool NUM_LOCK, bool SCROLL_LOCK)
     KEY_STATUS.CAPS_LOCK = CAPS_LOCK;
     KEY_STATUS.NUM_LOCK = NUM_LOCK;
     KEY_STATUS.SCROLL_LOCK = SCROLL_LOCK;
-}
-
-// Returns ASCII string of integer num
-void itos(int num, char *buf)
-{
-    char str[10];
-    int i = 0;
-    while (num > 0)
-    {
-        int digit = num % 10;
-        str[i] = itoc(digit);
-        i += 1;
-        num /= 10;
-    }
-    int j = 0;
-    buf[i] = '\0';
-    for (i = i - 1; i >= 0; --i)
-    {
-        buf[j] = str[i];
-        j += 1;
-    }
 }
 
 uint8_t kbd_read_status()
@@ -215,7 +192,7 @@ void kbd_set_scancode()
         printf("Scan code 3 is in use\n");
         break;
     default:
-        itos(data, buf);
+        itoa(data, buf);
         printf("Response is %s\n", buf);
         break;
     }
@@ -272,7 +249,7 @@ bool kbd_initialize()
 
 bool handle_special_key_states(uint8_t scancode)
 {
-    
+
     switch (scancode)
     {
     case 0x3a:
@@ -292,15 +269,16 @@ bool handle_special_key_states(uint8_t scancode)
 
 void draw_character(uint8_t scancode)
 {
-    if(!handle_special_key_states(scancode)){
-        char key = kbd_scan_tbl[scancode] ;
-        if (key == '\0') return;
+    if (!handle_special_key_states(scancode))
+    {
+        char key = kbd_scan_tbl[scancode];
+        if (key == '\0')
+            return;
         // Capitalize key if CAPS_LOCK
-        key = KEY_STATUS.CAPS_LOCK && key != '\b'? key-32: key;
+        key = KEY_STATUS.CAPS_LOCK && key != '\b' ? key - 32 : key;
         printf("%c", key);
-        kbd_insert((unsigned char) key);
+        kbd_insert((unsigned char)key);
     }
-   
 }
 
 void kbd_draw()
