@@ -3,6 +3,7 @@
 #include <kernel/tty.h>
 #include <kernel/kbd_input.h>
 #include <kernel/kbd_table.h>
+#include <kernel/panic.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -310,6 +311,6 @@ void kbd_init()
     }
     else
     {
-        /* TODO: Panic */
+        k_panic("Keyboard init failed!!");
     }
 }
