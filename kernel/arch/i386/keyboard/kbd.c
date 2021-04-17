@@ -85,40 +85,6 @@ void kbd_ack(void)
         ;
 }
 
-void kbd_handle(uint8_t code)
-{
-    switch (code)
-    {
-    case 0x0:
-        printf("Internal buffer overrun\n");
-        break;
-    case 0xAA:
-        printf("Returned during Basic Assurance Test (BAT) after reset. \nAlso L. shift key make code\n");
-        break;
-    case 0xEE:
-        printf("Returned from the ECHO command\n");
-        break;
-    case 0xF0:
-        printf("Prefix of certain make codes (Does not apply to PS/2)\n");
-        break;
-    case 0xFA:
-        printf("Keyboard acknowledge to keyboard command\n");
-        break;
-    case 0xFC:
-        printf("Basic Assurance Test (BAT) failed (PS/2 only)\n");
-        break;
-    case 0xFD:
-        printf("Diagonstic failure (Except PS/2)\n");
-        break;
-    case 0xFE:
-        printf("Keyboard requests for system to resend last command\n");
-        break;
-    case 0xFF:
-        printf("Key error (PS/2 only)\n");
-        break;
-    }
-}
-
 void kbd_set_led(bool num, bool caps, bool scroll)
 {
     const int KYBRD_ENC_CMD_SET_LED = 0xED;
