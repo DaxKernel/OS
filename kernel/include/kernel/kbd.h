@@ -3,7 +3,10 @@ PS/2 Keyboard Driver for DaxOS
 <rmidhunsuresh@gmail.com>
 */
 
-#include <stdbool.h>
+#ifndef KBD_DRIVER_H
+#define KBD_DRIVER_H
 
 void kbd_draw();
 void kbd_init();
+
+#endif
