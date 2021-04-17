@@ -3,6 +3,7 @@
 #include <kernel/tty.h>
 #include <kernel/kbd_input.h>
 #include <kernel/kbd_table.h>
+#include <kernel/kbd_callback.h>
 #include <kernel/panic.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -243,7 +244,12 @@ void draw_character(uint8_t scancode)
             return;
         // Capitalize key if CAPS_LOCK
         key = KEY_STATUS.CAPS_LOCK && key != '\b' ? key - 32 : key;
-        printf("%c", key);
+
+        // Optional callback
+#ifdef ENABLE_KBD_CALLBACK
+        callback(key);
+#endif
+
         kbd_insert((unsigned char)key);
     }
 }
