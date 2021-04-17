@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <kernel/tty.h>
-#include <kernel/kbd.h>
+#include <kernel/kbd/kbd.h>
 #include <d_unit/d_unit.h>
 #include <kernel/interrupt/interrupts.h>
 #include <kernel/gdt.h>

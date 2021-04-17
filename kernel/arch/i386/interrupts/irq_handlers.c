@@ -1,5 +1,5 @@
 #include <kernel/interrupt/pic.h>
-#include <kernel/kbd.h>
+#include <kernel/kbd/kbd.h>
 #include <kernel/interrupt/irq_handlers.h>
 #include <kernel/panic.h>
 

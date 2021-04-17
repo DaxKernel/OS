@@ -1,9 +1,9 @@
-#include <kernel/kbd.h>
+#include <kernel/kbd/kbd.h>
 #include <kernel/io.h>
 #include <kernel/tty.h>
-#include <kernel/kbd_input.h>
-#include <kernel/kbd_table.h>
-#include <kernel/kbd_callback.h>
+#include <kernel/kbd/kbd_input.h>
+#include <kernel/kbd/kbd_table.h>
+#include <kernel/kbd/kbd_callback.h>
 #include <kernel/panic.h>
 #include <stdio.h>
 #include <stdbool.h>
