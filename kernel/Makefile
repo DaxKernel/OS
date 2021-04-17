@@ -22,7 +22,7 @@ ARCHDIR=arch/$(HOSTARCH)
 
 include $(ARCHDIR)/make.config
 include $(ARCHDIR)/kbd/make.config
-include $(ARCHDIR)/k_datastruct/make.config
+include $(ARCHDIR)/ds/make.config
 include $(ARCHDIR)/mem/make.config
 include $(ARCHDIR)/interrupts/make.config
 

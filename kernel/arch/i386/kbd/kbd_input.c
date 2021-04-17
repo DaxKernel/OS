@@ -1,4 +1,4 @@
-#include <kernel/k_datastruct/circular_buffer.h>
+#include <kernel/ds/circular_buffer.h>
 #include <stdbool.h>
 #include <stdio.h>
 
