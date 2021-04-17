@@ -129,42 +129,6 @@ bool kbd_self_test()
     return (kbd_read_data() == 0x55) ? true : false;
 }
 
-void kbd_set_scancode()
-{
-
-    printf("Trying to set scancode = 1\n");
-    // Set scancode set
-    kbd_data_send_cmd(0xF0);
-    kbd_ack();
-    kbd_data_send_cmd(0x01);
-    kbd_ack();
-    printf("Apparently the keyboard did accept our scan-code.\n");
-
-    // Confirm scan code set
-    kbd_data_send_cmd(0xF0);
-    kbd_data_send_cmd(0);
-    kbd_ack();
-    kbd_ack();
-    uint8_t data = kbd_read_data();
-    char buf[10];
-    switch (data)
-    {
-    case 1:
-        printf("Scan code 1 is in use\n");
-        break;
-    case 2:
-        printf("Scan code 2 is in use\n");
-        break;
-    case 3:
-        printf("Scan code 3 is in use\n");
-        break;
-    default:
-        itoa(data, buf);
-        printf("Response is %s\n", buf);
-        break;
-    }
-}
-
 void kbd_flush_buffer()
 {
     while (kbd_read_status() & KBD_STATS_MASK_OUT_BUF)
