@@ -1,5 +1,6 @@
 #include <kernel/k_datastruct/circular_buffer.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 static circular_buf_t cbuf;
 static unsigned char buf[15];
@@ -24,15 +25,15 @@ void get_str(char *str)
         if (!circular_buf_empty(&cbuf))
         {
             circular_buf_get(&cbuf, &t);
-            if (t != '\n')
+            if (t == '\n')
+                break;
+            else if (t == '\b')
+                --ptr;
+            else
             {
                 *ptr = t;
                 ++ptr;
             }
-            else if (t == '\b')
-                --ptr;
-            else
-                break;
         }
         asm("hlt");
     }
@@ -49,12 +50,12 @@ void get_int(int *input)
         if (!circular_buf_empty(&cbuf))
         {
             circular_buf_get(&cbuf, &c);
-            if (c != '\n')
-            {
-                t = (t * 10) + (c - '0');
-            }
-            else
+            if (c == '\n')
                 break;
+            else if (c == '\b')
+                t = t / 10;
+            else
+                t = (t * 10) + (c - '0');
         }
         asm("hlt");
     }
