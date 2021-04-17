@@ -17,6 +17,8 @@ extern "C"
     size_t strlen(const char *);
     char *strcpy(char *destination, const char *source);
     char *strncpy(char *destination, const char *source, size_t num);
+    int strcmp(const char *p1, const char *p2);
+
 #ifdef __cplusplus
 }
 #endif
