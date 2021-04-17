@@ -6,7 +6,7 @@ PS/2 Keyboard Driver for DaxOS
 #ifndef KBD_DRIVER_H
 #define KBD_DRIVER_H
 
-void kbd_draw();
+void kbd_handle();
 void kbd_init();
 
 #endif

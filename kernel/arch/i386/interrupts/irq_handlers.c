@@ -7,7 +7,7 @@ IRQ_HANDLER keyboard_handler(IRQ_ARG)
 {
     /* write EOI */
     send_eoi();
-    kbd_draw();
+    kbd_handle();
 }
 
 IRQ_HANDLER divide_by_zero(IRQ_ARG)

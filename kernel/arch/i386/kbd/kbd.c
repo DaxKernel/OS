@@ -1,14 +1,13 @@
-#include <kernel/kbd/kbd.h>
 #include <kernel/io.h>
-#include <kernel/tty.h>
+#include <kernel/kbd/kbd.h>
+#include <kernel/kbd/kbd_callback.h>
 #include <kernel/kbd/kbd_input.h>
 #include <kernel/kbd/kbd_table.h>
-#include <kernel/kbd/kbd_callback.h>
 #include <kernel/panic.h>
-#include <stdio.h>
+#include <kernel/tty.h>
 #include <stdbool.h>
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 // Data I/O must accessed through port 0x60
 enum KBD_DATA_IO
@@ -235,7 +234,7 @@ bool handle_special_key_states(uint8_t scancode)
     return true;
 }
 
-void draw_character(uint8_t scancode)
+void handle_character(uint8_t scancode)
 {
     if (!handle_special_key_states(scancode))
     {
@@ -254,14 +253,14 @@ void draw_character(uint8_t scancode)
     }
 }
 
-void kbd_draw()
+void kbd_handle()
 {
     uint8_t status = kbd_read_status();
     if (status & KBD_STATS_MASK_OUT_BUF)
     {
         uint8_t data;
         data = kbd_read_data();
-        draw_character(data);
+        handle_character(data);
     }
 }
 
