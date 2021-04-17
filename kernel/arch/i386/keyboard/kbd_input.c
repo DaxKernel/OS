@@ -4,11 +4,13 @@
 static circular_buf_t cbuf;
 static unsigned char buf[15];
 
-void kbd_buffer_init(){
+void kbd_buffer_init()
+{
     cbuf = circular_buf_init(buf, 15);
 }
 
-void kbd_insert(unsigned char key){
+void kbd_insert(unsigned char key)
+{
     circular_buf_put(&cbuf, key);
 }
 
@@ -30,6 +32,7 @@ void get_str(char *str)
             else
                 break;
         }
+        asm("hlt");
     }
     *ptr = '\0';
 }
@@ -51,6 +54,7 @@ void get_int(int *input)
             else
                 break;
         }
+        asm("hlt");
     }
     *input = t;
 }
