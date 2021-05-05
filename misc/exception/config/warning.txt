@@ -1,0 +1,3 @@
+WARNING : This is an auto-generated file.
+Any modifications must be made in the script configs.
+Find them @ <project_root>/misc/exception
