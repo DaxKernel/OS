@@ -6,3 +6,4 @@ sysroot
 # IDE generated files
 .idea 
 .vscode/
+__pycache__
