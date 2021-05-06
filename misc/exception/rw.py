@@ -39,7 +39,6 @@ def getMatch(pattern, string):
     if match == None:
         raise SyntaxError("paths.config contains syntax errors!")
     else:
-
         return os.path.expanduser(match[1])
 
 
