@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <kernel/interrupt/irq_handlers.h>
 #include <kernel/interrupt/pic.h>
+#include <kernel/interrupt/exceptions.h>
 
 enum
 {
@@ -50,7 +51,15 @@ void idt_init(void)
     add_interrupt(0x21, (uint32_t)keyboard_handler);
 
     /* Divide by zero - CPU Exception */
-    add_interrupt(0x0, (uint32_t)divide_by_zero);
+    // add_interrupt(0x0, (uint32_t)divide_by_zero);
+    add_interrupt(0, (uint32_t)cpu_exception_0);
+    add_interrupt(1, (uint32_t)cpu_exception_1);
+    add_interrupt(2, (uint32_t)cpu_exception_2);
+    add_interrupt(3, (uint32_t)cpu_exception_3);
+    add_interrupt(4, (uint32_t)cpu_exception_4);
+    add_interrupt(5, (uint32_t)cpu_exception_5);
+    add_interrupt(6, (uint32_t)cpu_exception_6);
+    add_interrupt(7, (uint32_t)cpu_exception_7);
 
     load_idt();
 }
