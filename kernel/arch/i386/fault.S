@@ -1,8 +1,10 @@
 # Produces CPU Exceptions for testing
 
 .intel_syntax noprefix
+
 .global overflow 
 .global div_by_zero 
+.global breakpoint
 
 overflow:
     pushfd
@@ -16,4 +18,8 @@ div_by_zero:
     mov eax, 0
     mov ecx, 0
     div ecx
+    ret
+
+breakpoint:
+    int3
     ret
