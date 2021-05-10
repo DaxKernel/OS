@@ -12,7 +12,6 @@
 
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
-static uint16_t *const VGA_MEMORY = (uint16_t *)0xB8000;
 
 static size_t terminal_row;
 static size_t terminal_column;
@@ -45,11 +44,11 @@ bool verify_mbt_framebuffer(multiboot_info_t *mbt)
 
 void tty_initialize(multiboot_info_t *mbt)
 {
-    extern unsigned char _binary_unifont_sfn_start;
+    extern char _binary_unifont_sfn_start;
     if (!verify_mbt_framebuffer(mbt))
         k_panic("Framebuffer info not set by GRUB!");
-    ssfn_src = &_binary_unifont_sfn_start;
-    ssfn_dst.ptr = (uint8_t *)mbt->framebuffer_addr;
+    ssfn_src = (ssfn_font_t *)&_binary_unifont_sfn_start;
+    ssfn_dst.ptr = (uint8_t *)(intptr_t)mbt->framebuffer_addr;
     ssfn_dst.p = mbt->framebuffer_pitch;
     ssfn_dst.w = mbt->framebuffer_width;
     ssfn_dst.fg = 0xFFFFFFFF;
