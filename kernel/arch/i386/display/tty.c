@@ -58,32 +58,9 @@ void tty_initialize(multiboot_info_t *mbt)
     ssfn_dst.y = 0;
 }
 
-void tty_setcolor(uint8_t color)
-{
-    terminal_color = color;
-}
-
-void tty_put_entry_at(unsigned char c, uint8_t color, size_t x, size_t y)
-{
-    const size_t index = y * VGA_WIDTH + x;
-    terminal_buffer[index] = vga_entry(c, color);
-}
-
 static inline void tty_newline()
 {
     ssfn_putc('\n');
-}
-
-void tty_position_for_next_char()
-{
-    if (++terminal_column == VGA_WIDTH)
-    {
-        terminal_column = 0;
-        if (++terminal_row == VGA_HEIGHT)
-        {
-            terminal_row = 0;
-        }
-    }
 }
 
 void tty_insert_char(char c)
