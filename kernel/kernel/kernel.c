@@ -6,7 +6,6 @@
 #include <kernel/gdt.h>
 #include <kernel/multiboot_32.h>
 #include <kernel/mem/mem.h>
-#include <kernel/graphics.h>
 
 // Comment out the follow macro definiton to disable unit tests from running
 #define D_UNIT_ENABLED
