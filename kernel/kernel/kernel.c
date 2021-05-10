@@ -6,6 +6,7 @@
 #include <kernel/gdt.h>
 #include <kernel/multiboot_32.h>
 #include <kernel/mem/mem.h>
+#include <kernel/graphics.h>
 
 // Comment out the follow macro definiton to disable unit tests from running
 #define D_UNIT_ENABLED
@@ -18,14 +19,14 @@ void print_kernel_end()
 
 void print_header()
 {
-    tty_write_string_centered("DAX Operating System");
-    tty_write_string_centered("2021 (c)");
+    printf("DAX Operating System\n");
+    printf("2021 (c)\n");
     tty_print_horizontal_rule('-');
 }
 
-void init_devices()
+void init_devices(multiboot_info_t *mbt)
 {
-    tty_initialize();
+    tty_initialize(mbt);
     kbd_init();
 }
 
@@ -38,7 +39,7 @@ void init_descriptors()
 void kernel_main(multiboot_info_t *mbt, unsigned int magic)
 {
     init_descriptors();
-    init_devices();
+    init_devices(mbt);
     init_mem(mbt);
     verify_multiboot(magic, mbt);
     print_header();

@@ -3,7 +3,12 @@
 #include <stdint.h>
 #include <string.h>
 #include <kernel/tty.h>
+#include <kernel/panic.h>
 #include "vga.h"
+
+#define SSFN_CONSOLEBITMAP_TRUECOLOR
+#define _STDINT_H
+#include <kernel/ssfn.h>
 
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
@@ -29,14 +34,28 @@ void tty_clear()
         tty_clear_row(y);
 }
 
-void tty_initialize(void)
+bool verify_mbt_framebuffer(multiboot_info_t *mbt)
 {
-    terminal_row = 0;
-    terminal_column = 0;
-    terminal_color = vga_entry_color(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
-    terminal_buffer = VGA_MEMORY;
-    tty_clear();
-    tty_print_success("Terminal Status", "OK");
+    const uint32_t flags = mbt->flags;
+    const uint32_t bitmask = 1 << 12;
+    if (flags & bitmask)
+        return true;
+    return false;
+}
+
+void tty_initialize(multiboot_info_t *mbt)
+{
+    extern unsigned char _binary_unifont_sfn_start;
+    if (!verify_mbt_framebuffer(mbt))
+        k_panic("Framebuffer info not set by GRUB!");
+    ssfn_src = &_binary_unifont_sfn_start;
+    ssfn_dst.ptr = (uint8_t *)mbt->framebuffer_addr;
+    ssfn_dst.p = mbt->framebuffer_pitch;
+    ssfn_dst.w = mbt->framebuffer_width;
+    ssfn_dst.fg = 0xFFFFFFFF;
+    ssfn_dst.bg = 0xFF000000;
+    ssfn_dst.x = 0;
+    ssfn_dst.y = 0;
 }
 
 void tty_setcolor(uint8_t color)
@@ -52,8 +71,7 @@ void tty_put_entry_at(unsigned char c, uint8_t color, size_t x, size_t y)
 
 static inline void tty_newline()
 {
-    ++terminal_row;
-    terminal_column = 0;
+    ssfn_putc('\n');
 }
 
 void tty_position_for_next_char()
@@ -70,9 +88,7 @@ void tty_position_for_next_char()
 
 void tty_insert_char(char c)
 {
-    unsigned char uc = c;
-    tty_put_entry_at(uc, terminal_color, terminal_column, terminal_row);
-    tty_position_for_next_char();
+    ssfn_putc(c);
 }
 
 void tty_push_text_upward()
@@ -91,15 +107,9 @@ void tty_push_text_upward()
 
 void tty_backspace()
 {
-    if (terminal_column == 0)
-    {
-        terminal_column = VGA_WIDTH - 1;
-        terminal_row--;
-    }
-    else
-        terminal_column--;
-
-    tty_put_entry_at(' ', terminal_color, terminal_column, terminal_row);
+    ssfn_dst.x -= x_skip;
+    ssfn_putc(' ');
+    ssfn_dst.x -= x_skip;
 }
 
 void tty_put_char(char c)
@@ -128,20 +138,6 @@ void tty_write(const char *data, size_t size)
 void tty_write_string(const char *data)
 {
     tty_write(data, strlen(data));
-}
-
-void tty_write_string_centered(const char *string)
-{
-    const size_t str_length = strlen(string);
-    if (str_length < VGA_WIDTH)
-    {
-        // Center text if and only if it is possible to do so.
-        // Otherwise merely print the text
-        const int skip = (VGA_WIDTH - str_length) / 2;
-        terminal_column = skip;
-    }
-    tty_write_string(string);
-    tty_newline();
 }
 
 void tty_print_horizontal_rule(const char symbol)
