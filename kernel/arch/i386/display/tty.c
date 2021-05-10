@@ -130,11 +130,12 @@ void tty_print_horizontal_rule(const char symbol)
 
 void tty_print_success(const char *string, const char *success_string)
 {
-    uint8_t c_color = terminal_color;
+    uint32_t c_color = ssfn_dst.fg;
     tty_write_string(string);
     tty_write_string(" - [");
-    terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREEN, VGA_COLOR_BLACK);
+    uint32_t s_color = 0xFF00FF00;
+    ssfn_dst.fg = s_color;
     tty_write_string(success_string);
-    terminal_color = c_color;
+    ssfn_dst.fg = c_color;
     tty_write_string("]\n");
 }
