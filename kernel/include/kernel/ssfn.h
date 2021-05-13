@@ -79,8 +79,8 @@ typedef struct
 typedef struct
 {
     uint8_t *ptr; /* pointer to the buffer */
-    int16_t w;    /* width (positive: ARGB, negative: ABGR pixels) */
-    int16_t h;    /* height */
+    int16_t w;    /* Width of framebuffer (positive: ARGB, negative: ABGR pixels) */
+    int16_t h;    /* Height of framebuffer */
     uint16_t p;   /* pitch, bytes per line */
     int16_t x;    /* cursor x */
     int16_t y;    /* cursor y */
@@ -171,6 +171,18 @@ struct
     // Total number of lines
     uint8_t tl;
 } ssfn_qty;
+
+/**
+ * Clear line pointed by ssfn_dst.y.
+ * Puts x-cursor at start of cleared line.
+ */
+void ssfn_clr_line()
+{
+    ssfn_dst.x = 0;
+    char *start = (uint8_t *)ssfn_dst.ptr + ssfn_dst.y * ssfn_dst.p;
+    const int pixel_per_line = ssfn_dst.p * ssfn_src->height;
+    memset(start, 0, pixel_per_line);
+}
 
 /**
  * Erase last character and move x-cursor one position back

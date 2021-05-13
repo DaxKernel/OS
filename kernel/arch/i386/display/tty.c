@@ -52,15 +52,12 @@ void tty_insert_char(char c)
 
 void tty_push_text_upward()
 {
-    char *src = ssfn_dst.ptr + ssfn_dst.p * ssfn_src->height;
-    char *end = (uint32_t *)ssfn_dst.ptr + (ssfn_dst.w * ssfn_dst.h);
-    memmove(ssfn_dst.ptr, src, end - src);
+    char *second_line = ssfn_dst.ptr + ssfn_dst.p * ssfn_src->height;
+    const int n = ssfn_dst.p * (ssfn_dst.h - ssfn_src->height);
+    memmove(ssfn_dst.ptr, second_line, n);
     curr_line_count--;
-    ssfn_dst.y -= ssfn_src->height;
-    ssfn_dst.x = 0;
-    char *start = (uint8_t *)ssfn_dst.ptr + ssfn_dst.y * ssfn_dst.p;
-    const int ppl = ssfn_dst.p * ssfn_src->height;
-    memset(start, 0, ppl);
+    ssfn_dst.y = ssfn_dst.y - ssfn_src->height;
+    ssfn_clr_line();
 }
 
 void tty_backspace()
