@@ -242,7 +242,6 @@ void *ssfn_get_pos()
  */
 void handle_screenful()
 {
-    const int bytes_per_line = ssfn_dst.p * ssfn_src->height;
     const int skip = ssfn_dst.p * ssfn_dst.h;
     const char *end = (uint8_t *)ssfn_dst.ptr + skip;
     const char *pos = ssfn_get_pos();
