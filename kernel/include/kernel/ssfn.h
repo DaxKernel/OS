@@ -160,7 +160,6 @@ uint32_t ssfn_utf8(char **s)
  */
 ssfn_font_t *ssfn_src; /* font buffer with an inflated bitmap font */
 ssfn_buf_t ssfn_dst;   /* destination frame buffer */
-uint32_t x_skip;
 
 /**
  * Minimal OS kernel console renderer
@@ -280,7 +279,6 @@ int ssfn_putc(uint32_t unicode)
                 *p = ssfn_dst.bg;
         }
     ssfn_dst.x += chr[4];
-    x_skip = chr[4];
     ssfn_dst.y += chr[5];
     return SSFN_OK;
 }
