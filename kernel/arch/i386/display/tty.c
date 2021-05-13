@@ -48,15 +48,7 @@ void tty_initialize(multiboot_info_t *mbt)
     extern char _binary_unifont_sfn_start;
     if (!verify_mbt_framebuffer(mbt))
         k_panic("Framebuffer info not set by GRUB!");
-    ssfn_src = (ssfn_font_t *)&_binary_unifont_sfn_start;
-    ssfn_dst.ptr = (uint8_t *)(intptr_t)mbt->framebuffer_addr;
-    ssfn_dst.p = mbt->framebuffer_pitch;
-    ssfn_dst.w = mbt->framebuffer_width;
-    ssfn_dst.h = mbt->framebuffer_height;
-    ssfn_dst.fg = 0xFFFFFFFF;
-    ssfn_dst.bg = 0xFF000000;
-    ssfn_dst.x = 0;
-    ssfn_dst.y = 0;
+    ssfn_from_vesa(mbt, &_binary_unifont_sfn_start);
     calculate_max_qty();
     tty_print_success("VESA Graphics Driver", "OK");
     fill_debug_text();

@@ -162,6 +162,23 @@ ssfn_font_t *ssfn_src; /* font buffer with an inflated bitmap font */
 ssfn_buf_t ssfn_dst;   /* destination frame buffer */
 
 /**
+ * Initialize ssfn global configuration from multiboot
+ * and font.
+ */
+void ssfn_from_vesa(multiboot_info_t *mbt, void *font)
+{
+    ssfn_src = (ssfn_font_t *)font;
+    ssfn_dst.ptr = (uint8_t *)(intptr_t)mbt->framebuffer_addr;
+    ssfn_dst.p = mbt->framebuffer_pitch;
+    ssfn_dst.w = mbt->framebuffer_width;
+    ssfn_dst.h = mbt->framebuffer_height;
+    ssfn_dst.fg = 0xFFFFFFFF;
+    ssfn_dst.bg = 0xFF000000;
+    ssfn_dst.x = 0;
+    ssfn_dst.y = 0;
+}
+
+/**
  * Minimal OS kernel console renderer
  *
  * @param unicode character
