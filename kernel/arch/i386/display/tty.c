@@ -26,20 +26,20 @@ void fill_debug_text()
     }
 }
 
-bool verify_mbt_framebuffer(multiboot_info_t *mbt)
+void verify_mbt_framebuffer(multiboot_info_t *mbt)
 {
     const uint32_t flags = mbt->flags;
     const uint32_t bitmask = 1 << 12;
-    if (flags & bitmask)
-        return true;
-    return false;
+    if (!(flags & bitmask))
+    {
+        k_panic("Multiboot framebuffer not valid!");
+    }
 }
 
 void tty_initialize(multiboot_info_t *mbt)
 {
     extern char _binary_unifont_sfn_start;
-    if (!verify_mbt_framebuffer(mbt))
-        k_panic("Framebuffer info not set by GRUB!");
+    verify_mbt_framebuffer(mbt);
     ssfn_from_vesa(mbt, &_binary_unifont_sfn_start);
     tty_print_success("VESA Graphics Driver", "OK");
     fill_debug_text();
