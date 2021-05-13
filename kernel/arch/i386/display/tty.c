@@ -1,12 +1,32 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <stddef.h>
 #include <string.h>
+#include <stdlib.h>
 #include <kernel/tty.h>
 #include <kernel/panic.h>
 
 #define SSFN_CONSOLEBITMAP_TRUECOLOR
 #include <kernel/ssfn.h>
+
+uint16_t curr_line_count = 0;
+uint8_t max_lines;
+uint8_t char_width;
+
+void test_draw()
+{
+    for (uint32_t *ptr = ssfn_dst.ptr, c = 0; c < 10; ++c, ++ptr)
+        *ptr = 0xffff0000;
+}
+
+void fill_debug_text()
+{
+    for (int i = 0; i < max_lines - 11; ++i)
+    {
+        tty_write_string("For a GUI, you'll probably want to display icons.\n");
+    }
+}
 
 bool verify_mbt_framebuffer(multiboot_info_t *mbt)
 {
@@ -15,6 +35,12 @@ bool verify_mbt_framebuffer(multiboot_info_t *mbt)
     if (flags & bitmask)
         return true;
     return false;
+}
+
+void calculate_max_qty()
+{
+    max_lines = ssfn_dst.h / ssfn_src->height;
+    char_width = ssfn_src->width / 2;
 }
 
 void tty_initialize(multiboot_info_t *mbt)
@@ -26,11 +52,14 @@ void tty_initialize(multiboot_info_t *mbt)
     ssfn_dst.ptr = (uint8_t *)(intptr_t)mbt->framebuffer_addr;
     ssfn_dst.p = mbt->framebuffer_pitch;
     ssfn_dst.w = mbt->framebuffer_width;
+    ssfn_dst.h = mbt->framebuffer_height;
     ssfn_dst.fg = 0xFFFFFFFF;
     ssfn_dst.bg = 0xFF000000;
     ssfn_dst.x = 0;
     ssfn_dst.y = 0;
+    calculate_max_qty();
     tty_print_success("VESA Graphics Driver", "OK");
+    fill_debug_text();
 }
 
 void tty_insert_char(char c)
@@ -40,11 +69,19 @@ void tty_insert_char(char c)
 
 void tty_push_text_upward()
 {
+    char *src = ssfn_dst.ptr + ssfn_dst.p * ssfn_src->height;
+    char *end = (uint32_t *)ssfn_dst.ptr + (ssfn_dst.w * ssfn_dst.h);
+    memmove(ssfn_dst.ptr, src, end - src);
+    curr_line_count--;
+    ssfn_dst.y -= ssfn_src->height;
+    ssfn_dst.x = 0;
+    char *start = (uint8_t *)ssfn_dst.ptr + ssfn_dst.y * ssfn_dst.p;
+    const int ppl = ssfn_dst.p * ssfn_src->height;
+    memset(start, 0, ppl);
 }
 
 void tty_backspace()
 {
-    const uint8_t char_width = ssfn_src->width / 2;
     ssfn_dst.x -= char_width;
     ssfn_putc(' ');
     ssfn_dst.x -= char_width;
@@ -53,18 +90,18 @@ void tty_backspace()
 void tty_put_char(char c)
 {
     if (c == '\n')
+    {
+        curr_line_count++;
         ssfn_putc('\n');
+    }
     else if (c == '\b')
         tty_backspace();
     else
         tty_insert_char(c);
-    /*     if (terminal_row >= VGA_HEIGHT)
+    if (curr_line_count == max_lines)
     {
-        // At this point screen is full of text
-        // Push rows upward
         tty_push_text_upward();
-        terminal_row--;
-    } */
+    }
 }
 
 void tty_write(const char *data, size_t size)
