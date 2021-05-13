@@ -184,7 +184,7 @@ void (*screenfull_handler)();
 void ssfn_clr_line()
 {
     ssfn_dst.x = 0;
-    char *start = (uint8_t *)ssfn_dst.ptr + ssfn_dst.y * ssfn_dst.p;
+    unsigned char *start = (uint8_t *)ssfn_dst.ptr + ssfn_dst.y * ssfn_dst.p;
     const int bytes_per_line = ssfn_dst.p * ssfn_src->height;
     memset(start, 0, bytes_per_line);
 }
@@ -195,7 +195,7 @@ void ssfn_clr_line()
 void ssfn_backspace()
 {
     ssfn_dst.x = ssfn_dst.x - ssfn_qty.ppc;
-    uint32_t *start = ssfn_dst.ptr + ssfn_dst.y * ssfn_dst.p + ssfn_dst.x * 4;
+    uint32_t *start = (uint32_t *)(ssfn_dst.ptr + ssfn_dst.y * ssfn_dst.p + ssfn_dst.x * 4);
     uint32_t *ptr = start;
     for (uint8_t i = 0; i < ssfn_src->height; ++i)
     {
@@ -233,7 +233,7 @@ void ssfn_from_vesa(multiboot_info_t *mbt, void *font)
  */
 void *ssfn_get_pos()
 {
-    char *pos = (uint8_t *)ssfn_dst.ptr + ssfn_dst.y * ssfn_dst.p + ssfn_dst.x * sizeof(uint32_t);
+    unsigned char *pos = (uint8_t *)ssfn_dst.ptr + ssfn_dst.y * ssfn_dst.p + ssfn_dst.x * sizeof(uint32_t);
     return (void *)pos;
 }
 
@@ -243,8 +243,8 @@ void *ssfn_get_pos()
 void handle_screenful()
 {
     const int skip = ssfn_dst.p * ssfn_dst.h;
-    const char *end = (uint8_t *)ssfn_dst.ptr + skip;
-    const char *pos = ssfn_get_pos();
+    const unsigned char *end = (uint8_t *)ssfn_dst.ptr + skip;
+    const unsigned char *pos = ssfn_get_pos();
     if (pos >= end)
     {
         (*screenfull_handler)();
@@ -256,7 +256,7 @@ void handle_screenful()
  */
 void ssfn_push_rows_upwards()
 {
-    char *second_line = ssfn_dst.ptr + ssfn_dst.p * ssfn_src->height;
+    unsigned char *second_line = ssfn_dst.ptr + ssfn_dst.p * ssfn_src->height;
     const int n = ssfn_dst.p * (ssfn_dst.h - ssfn_src->height);
     memmove(ssfn_dst.ptr, second_line, n);
 }

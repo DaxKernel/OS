@@ -12,7 +12,7 @@
 
 void test_draw()
 {
-    for (uint32_t *ptr = ssfn_dst.ptr, c = 0; c < 10; ++c, ++ptr)
+    for (uint32_t *ptr = (uint32_t *)ssfn_dst.ptr, c = 0; c < 10; ++c, ++ptr)
         *ptr = 0xffff0000;
 }
 
