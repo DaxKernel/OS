@@ -10,8 +10,6 @@
 #define SSFN_CONSOLEBITMAP_TRUECOLOR
 #include <kernel/ssfn.h>
 
-uint16_t curr_line_count = 0;
-
 void test_draw()
 {
     for (uint32_t *ptr = ssfn_dst.ptr, c = 0; c < 10; ++c, ++ptr)
@@ -43,10 +41,7 @@ void tty_insert_char(char c)
 
 void tty_push_text_upward()
 {
-    char *second_line = ssfn_dst.ptr + ssfn_dst.p * ssfn_src->height;
-    const int n = ssfn_dst.p * (ssfn_dst.h - ssfn_src->height);
-    memmove(ssfn_dst.ptr, second_line, n);
-    curr_line_count--;
+    ssfn_push_rows_upwards();
     ssfn_dst.y = ssfn_dst.y - ssfn_src->height;
     ssfn_clr_line();
 }

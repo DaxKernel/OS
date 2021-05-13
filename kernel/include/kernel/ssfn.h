@@ -173,6 +173,11 @@ struct
 } ssfn_qty;
 
 /**
+ * Pointer to function that must be called when screen is full.
+ */
+void (*screenfull_handler)();
+
+/**
  * Clear line pointed by ssfn_dst.y.
  * Puts x-cursor at start of cleared line.
  */
@@ -180,8 +185,8 @@ void ssfn_clr_line()
 {
     ssfn_dst.x = 0;
     char *start = (uint8_t *)ssfn_dst.ptr + ssfn_dst.y * ssfn_dst.p;
-    const int pixel_per_line = ssfn_dst.p * ssfn_src->height;
-    memset(start, 0, pixel_per_line);
+    const int bytes_per_line = ssfn_dst.p * ssfn_src->height;
+    memset(start, 0, bytes_per_line);
 }
 
 /**
@@ -224,6 +229,40 @@ void ssfn_from_vesa(multiboot_info_t *mbt, void *font)
 }
 
 /**
+ * Pointer to pen position
+ */
+void *ssfn_get_pos()
+{
+    char *pos = (uint8_t *)ssfn_dst.ptr + ssfn_dst.y * ssfn_dst.p + ssfn_dst.x * sizeof(uint32_t);
+    return (void *)pos;
+}
+
+/**
+ * If screen is full of text, push text up one row
+ */
+void handle_screenful()
+{
+    const int bytes_per_line = ssfn_dst.p * ssfn_src->height;
+    const int skip = ssfn_dst.p * ssfn_dst.h;
+    const char *end = (uint8_t *)ssfn_dst.ptr + skip;
+    const char *pos = ssfn_get_pos();
+    if (pos >= end)
+    {
+        (*screenfull_handler)();
+    }
+}
+
+/**
+ * Push text-rows up once starting from second row of text
+ */
+void ssfn_push_rows_upwards()
+{
+    char *second_line = ssfn_dst.ptr + ssfn_dst.p * ssfn_src->height;
+    const int n = ssfn_dst.p * (ssfn_dst.h - ssfn_src->height);
+    memmove(ssfn_dst.ptr, second_line, n);
+}
+
+/**
  * Minimal OS kernel console renderer
  *
  * @param unicode character
@@ -253,6 +292,7 @@ int ssfn_putc(uint32_t unicode)
         if (unicode == '\n')
         {
             ssfn_dst.y += ssfn_src->height;
+            handle_screenful();
         }
         return SSFN_OK;
     }
