@@ -73,9 +73,13 @@ void tty_put_char(char c)
         ssfn_putc('\n');
     }
     else if (c == '\b')
+    {
         tty_backspace();
+    }
     else
+    {
         tty_insert_char(c);
+    }
     if (curr_line_count == ssfn_qty.tl)
     {
         tty_push_text_upward();
