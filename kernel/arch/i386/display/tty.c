@@ -36,15 +36,6 @@ void verify_mbt_framebuffer(multiboot_info_t *mbt)
     }
 }
 
-void tty_initialize(multiboot_info_t *mbt)
-{
-    extern char _binary_unifont_sfn_start;
-    verify_mbt_framebuffer(mbt);
-    ssfn_from_vesa(mbt, &_binary_unifont_sfn_start);
-    tty_print_success("VESA Graphics Driver", "OK");
-    fill_debug_text();
-}
-
 void tty_insert_char(char c)
 {
     ssfn_putc(c);
@@ -111,4 +102,14 @@ void tty_print_success(const char *string, const char *success_string)
     tty_write_string(success_string);
     ssfn_dst.fg = c_color;
     tty_write_string("]\n");
+}
+
+void tty_initialize(multiboot_info_t *mbt)
+{
+    extern char _binary_unifont_sfn_start;
+    verify_mbt_framebuffer(mbt);
+    ssfn_from_vesa(mbt, &_binary_unifont_sfn_start);
+    screenfull_handler = &tty_push_text_upward;
+    tty_print_success("VESA Graphics Driver", "OK");
+    fill_debug_text();
 }
