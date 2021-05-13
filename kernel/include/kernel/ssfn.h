@@ -172,11 +172,19 @@ struct
     uint8_t tl;
 } ssfn_qty;
 
+/**
+ * Erase last character and move x-cursor one position back
+ */
 void ssfn_backspace()
 {
-    ssfn_dst.x -= ssfn_qty.ppc;
-    ssfn_putc(' ');
-    ssfn_dst.x -= ssfn_qty.ppc;
+    ssfn_dst.x = ssfn_dst.x - ssfn_qty.ppc;
+    uint32_t *start = ssfn_dst.ptr + ssfn_dst.y * ssfn_dst.p + ssfn_dst.x * 4;
+    uint32_t *ptr = start;
+    for (uint8_t i = 0; i < ssfn_src->height; ++i)
+    {
+        memset(ptr, 0, ssfn_qty.ppc * 4);
+        ptr = start + (i + 1) * (ssfn_dst.p / 4);
+    }
 }
 
 void calculate_ssfn_qty()
