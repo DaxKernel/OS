@@ -51,26 +51,10 @@ void tty_backspace()
     ssfn_backspace();
 }
 
-void tty_put_char(char c)
-{
-    switch (c)
-    {
-    case '\n':
-        ssfn_putc('\n');
-        break;
-    case '\b':
-        tty_backspace();
-        break;
-    default:
-        tty_insert_char(c);
-        break;
-    }
-}
-
 void tty_write(const char *data, size_t size)
 {
     for (size_t i = 0; i < size; i++)
-        tty_put_char(data[i]);
+        tty_insert_char(data[i]);
 }
 
 void tty_write_string(const char *data)

@@ -295,6 +295,11 @@ int ssfn_putc(uint32_t unicode)
         }
         return SSFN_OK;
     }
+    else if (unicode == '\b')
+    {
+        ssfn_backspace();
+        return SSFN_OK;
+    }
     w = ssfn_dst.w < 0 ? -ssfn_dst.w : ssfn_dst.w;
     for (ptr = (uint8_t *)ssfn_src + ssfn_src->characters_offs, i = 0; i < 0x110000; i++)
     {
