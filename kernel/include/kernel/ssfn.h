@@ -162,6 +162,30 @@ ssfn_font_t *ssfn_src; /* font buffer with an inflated bitmap font */
 ssfn_buf_t ssfn_dst;   /* destination frame buffer */
 
 /**
+ * Precalculated helpful quantities 
+ */
+struct
+{
+    // Pixels per character
+    uint8_t ppc;
+    // Total number of lines
+    uint8_t tl;
+} ssfn_qty;
+
+void ssfn_backspace()
+{
+    ssfn_dst.x -= ssfn_qty.ppc;
+    ssfn_putc(' ');
+    ssfn_dst.x -= ssfn_qty.ppc;
+}
+
+void calculate_ssfn_qty()
+{
+    ssfn_qty.ppc = ssfn_src->width / 2;
+    ssfn_qty.tl = ssfn_dst.h / ssfn_src->height;
+}
+
+/**
  * Initialize ssfn global configuration from multiboot
  * and font.
  */
@@ -176,6 +200,7 @@ void ssfn_from_vesa(multiboot_info_t *mbt, void *font)
     ssfn_dst.bg = 0xFF000000;
     ssfn_dst.x = 0;
     ssfn_dst.y = 0;
+    calculate_ssfn_qty();
 }
 
 /**

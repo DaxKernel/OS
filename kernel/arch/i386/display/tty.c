@@ -11,8 +11,6 @@
 #include <kernel/ssfn.h>
 
 uint16_t curr_line_count = 0;
-uint8_t max_lines;
-uint8_t char_width;
 
 void test_draw()
 {
@@ -22,7 +20,7 @@ void test_draw()
 
 void fill_debug_text()
 {
-    for (int i = 0; i < max_lines - 11; ++i)
+    for (int i = 0; i < ssfn_qty.tl - 11; ++i)
     {
         tty_write_string("For a GUI, you'll probably want to display icons.\n");
     }
@@ -37,19 +35,12 @@ bool verify_mbt_framebuffer(multiboot_info_t *mbt)
     return false;
 }
 
-void calculate_max_qty()
-{
-    max_lines = ssfn_dst.h / ssfn_src->height;
-    char_width = ssfn_src->width / 2;
-}
-
 void tty_initialize(multiboot_info_t *mbt)
 {
     extern char _binary_unifont_sfn_start;
     if (!verify_mbt_framebuffer(mbt))
         k_panic("Framebuffer info not set by GRUB!");
     ssfn_from_vesa(mbt, &_binary_unifont_sfn_start);
-    calculate_max_qty();
     tty_print_success("VESA Graphics Driver", "OK");
     fill_debug_text();
 }
@@ -74,9 +65,7 @@ void tty_push_text_upward()
 
 void tty_backspace()
 {
-    ssfn_dst.x -= char_width;
-    ssfn_putc(' ');
-    ssfn_dst.x -= char_width;
+    ssfn_backspace();
 }
 
 void tty_put_char(char c)
@@ -90,7 +79,7 @@ void tty_put_char(char c)
         tty_backspace();
     else
         tty_insert_char(c);
-    if (curr_line_count == max_lines)
+    if (curr_line_count == ssfn_qty.tl)
     {
         tty_push_text_upward();
     }
