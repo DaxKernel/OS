@@ -67,22 +67,17 @@ void tty_backspace()
 
 void tty_put_char(char c)
 {
-    if (c == '\n')
+    switch (c)
     {
-        curr_line_count++;
+    case '\n':
         ssfn_putc('\n');
-    }
-    else if (c == '\b')
-    {
+        break;
+    case '\b':
         tty_backspace();
-    }
-    else
-    {
+        break;
+    default:
         tty_insert_char(c);
-    }
-    if (curr_line_count == ssfn_qty.tl)
-    {
-        tty_push_text_upward();
+        break;
     }
 }
 
