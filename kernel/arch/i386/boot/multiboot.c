@@ -15,7 +15,18 @@ inline void verify_multiboot_mmap(multiboot_info_t* mbt){
   }
 }
 
+inline void verify_multiboot_framebuffer(multiboot_info_t *mbt)
+{
+    const uint32_t flags = mbt->flags;
+    const uint32_t bitmask = 1 << 12;
+    if (!(flags & bitmask))
+    {
+        k_panic("Multiboot framebuffer not valid!");
+    }
+}
+
 inline void verify_multiboot(uint32_t magic, multiboot_info_t* mbt){
     verify_multiboot_header(magic);
     verify_multiboot_mmap(mbt);
+    verify_multiboot_framebuffer(mbt);
 }

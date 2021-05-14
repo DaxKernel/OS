@@ -24,16 +24,6 @@ void fill_debug_text()
     }
 }
 
-void verify_mbt_framebuffer(multiboot_info_t *mbt)
-{
-    const uint32_t flags = mbt->flags;
-    const uint32_t bitmask = 1 << 12;
-    if (!(flags & bitmask))
-    {
-        k_panic("Multiboot framebuffer not valid!");
-    }
-}
-
 void tty_insert_char(char c)
 {
     ssfn_putc(c);
@@ -81,7 +71,6 @@ void tty_print_success(const char *string, const char *success_string)
 void tty_initialize(multiboot_info_t *mbt)
 {
     extern char _binary_unifont_sfn_start;
-    verify_mbt_framebuffer(mbt);
     ssfn_from_vesa(mbt, &_binary_unifont_sfn_start);
     screenfull_handler = &tty_push_text_upward;
     tty_print_success("VESA Graphics Driver", "OK");
