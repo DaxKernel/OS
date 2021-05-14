@@ -172,6 +172,14 @@ struct
     uint8_t tl;
 } ssfn_qty;
 
+enum color
+{
+    red = 0xFFFF0000,
+    green = 0xFF00FF00,
+    blue = 0xFF0000FF,
+    lime = 0xFFBFFF00
+};
+
 /**
  * Pointer to function that must be called when screen is full.
  */
