@@ -14,6 +14,7 @@ void print_header()
 {
     tty_write_string_centered("DAX Operating System");
     tty_write_string_centered("2021 (c)");
+    tty_print_horizontal_rule();
 }
 
 void init_devices(multiboot_info_t *mbt)

@@ -47,13 +47,16 @@ void tty_write_string(const char *data)
     tty_write(data, strlen(data));
 }
 
-void tty_print_horizontal_rule(/* const char symbol */)
+void tty_print_horizontal_rule()
 {
-    /*     for (size_t i = 0; i < VGA_WIDTH; ++i)
+    uint32_t *ptr = (uint32_t *)ssfn_get_start_of_line();
+    // Go five rows of pixels down
+    ptr = (uint32_t *)((char *)ptr + 5 * ssfn_dst.p);
+    for (int i = 0; i < ssfn_dst.w; ++i, ++ptr)
     {
-        tty_put_char(symbol);
+        *ptr = white;
     }
-    tty_newline(); */
+    ssfn_dst.y = ssfn_dst.y + ssfn_src->height;
 }
 
 void tty_print_with_color(const char *string, uint32_t color)
@@ -87,5 +90,5 @@ void tty_initialize(multiboot_info_t *mbt)
     ssfn_from_vesa(mbt, &_binary_unifont_sfn_start);
     screenfull_handler = &tty_push_text_upward;
     tty_print_success("VESA Graphics Driver", "OK");
-    fill_debug_text();
+    // fill_debug_text();
 }
