@@ -37,9 +37,9 @@ void init_descriptors()
 
 void kernel_main(multiboot_info_t *mbt, unsigned int magic)
 {
+    init_mem(mbt);
     init_descriptors();
     init_devices(mbt);
-    init_mem(mbt);
     verify_multiboot(magic, mbt);
     print_header();
 #ifdef D_UNIT_ENABLED
