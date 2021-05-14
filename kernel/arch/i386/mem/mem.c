@@ -2,7 +2,6 @@
 #include <kernel/mem/p_stack.h>
 #include <kernel/mem/mmap.h>
 #include <kernel/mem/f_size.h>
-#include <stdio.h>
 #include <stddef.h>
 
 extern char _kernel_end;
