@@ -84,6 +84,16 @@ void tty_write_string_centered(const char *string)
     tty_insert_char('\n');
 }
 
+void tty_print_header()
+{
+    uint32_t color = ssfn_dst.fg;
+    ssfn_dst.fg = 0xfffa534d;
+    tty_write_string_centered("DAX Operating System");
+    tty_write_string_centered("2021 (c)");
+    tty_print_seperator();
+    ssfn_dst.fg = color;
+}
+
 void tty_initialize(multiboot_info_t *mbt)
 {
     extern char _binary_unifont_sfn_start;
