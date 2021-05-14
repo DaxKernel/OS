@@ -46,11 +46,6 @@ void tty_push_text_upward()
     ssfn_clr_line();
 }
 
-void tty_backspace()
-{
-    ssfn_backspace();
-}
-
 void tty_write(const char *data, size_t size)
 {
     for (size_t i = 0; i < size; i++)
