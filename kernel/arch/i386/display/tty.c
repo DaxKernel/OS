@@ -56,15 +56,19 @@ void tty_print_horizontal_rule(/* const char symbol */)
     tty_newline(); */
 }
 
+void tty_print_with_color(const char *string, uint32_t color)
+{
+    const uint32_t current_color = ssfn_dst.fg;
+    ssfn_dst.fg = color;
+    tty_write_string(string);
+    ssfn_dst.fg = current_color;
+}
+
 void tty_print_success(const char *string, const char *success_string)
 {
-    uint32_t c_color = ssfn_dst.fg;
     tty_write_string(string);
     tty_write_string(" - [");
-    uint32_t s_color = 0xFF00FF00;
-    ssfn_dst.fg = s_color;
-    tty_write_string(success_string);
-    ssfn_dst.fg = c_color;
+    tty_print_with_color(success_string, lime);
     tty_write_string("]\n");
 }
 
