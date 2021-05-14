@@ -177,7 +177,9 @@ enum color
     red = 0xFFFF0000,
     green = 0xFF00FF00,
     blue = 0xFF0000FF,
-    lime = 0xFFBFFF00
+    lime = 0xFFBFFF00,
+    white = 0xFFFFFFFF,
+    black = 0xFF000000
 };
 
 /**
