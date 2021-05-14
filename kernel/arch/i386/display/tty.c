@@ -72,6 +72,15 @@ void tty_print_success(const char *string, const char *success_string)
     tty_write_string("]\n");
 }
 
+void tty_write_string_centered(const char *string)
+{
+    const int len = strlen(string);
+    const int n_pixel = ssfn_qty.ppc * len;
+    ssfn_dst.x = (ssfn_dst.w - n_pixel) / 2;
+    tty_write_string(string);
+    tty_insert_char('\n');
+}
+
 void tty_initialize(multiboot_info_t *mbt)
 {
     extern char _binary_unifont_sfn_start;
