@@ -47,7 +47,7 @@ void tty_write_string(const char *data)
     tty_write(data, strlen(data));
 }
 
-void tty_print_horizontal_rule()
+void tty_print_seperator()
 {
     uint32_t *ptr = (uint32_t *)ssfn_get_start_of_line();
     // Go five rows of pixels down
