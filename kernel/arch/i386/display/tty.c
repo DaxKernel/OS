@@ -87,7 +87,7 @@ void tty_write_string_centered(const char *string)
 void tty_print_header()
 {
     uint32_t color = ssfn_dst.fg;
-    ssfn_dst.fg = 0xfffa534d;
+    ssfn_dst.fg = sunset_orange;
     tty_write_string_centered("DAX Operating System");
     tty_write_string_centered("2021 (c)");
     tty_print_seperator();

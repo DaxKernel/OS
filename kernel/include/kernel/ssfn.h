@@ -179,7 +179,8 @@ enum color
     blue = 0xFF0000FF,
     lime = 0xFFBFFF00,
     white = 0xFFFFFFFF,
-    black = 0xFF000000
+    black = 0xFF000000,
+    sunset_orange = 0xFFFA534D
 };
 
 /**
