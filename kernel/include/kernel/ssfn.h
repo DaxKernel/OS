@@ -186,13 +186,31 @@ enum color
 void (*screenfull_handler)();
 
 /**
+ * Pointer to pen position
+ */
+void *ssfn_get_pos()
+{
+    unsigned char *pos = (uint8_t *)ssfn_dst.ptr + ssfn_dst.y * ssfn_dst.p + ssfn_dst.x * sizeof(uint32_t);
+    return (void *)pos;
+}
+
+/**
+ * Pointer to start of current line
+ */
+void *ssfn_get_start_of_line()
+{
+    void *result = (char *)ssfn_dst.ptr + ssfn_dst.p * ssfn_dst.y;
+    return result;
+}
+
+/**
  * Clear line pointed by ssfn_dst.y.
  * Puts x-cursor at start of cleared line.
  */
 void ssfn_clr_line()
 {
     ssfn_dst.x = 0;
-    unsigned char *start = (uint8_t *)ssfn_dst.ptr + ssfn_dst.y * ssfn_dst.p;
+    char *start = (char *)ssfn_get_start_of_line();
     const int bytes_per_line = ssfn_dst.p * ssfn_src->height;
     memset(start, 0, bytes_per_line);
 }
@@ -234,15 +252,6 @@ void ssfn_from_vesa(multiboot_info_t *mbt, void *font)
     ssfn_dst.x = 0;
     ssfn_dst.y = 0;
     calculate_ssfn_qty();
-}
-
-/**
- * Pointer to pen position
- */
-void *ssfn_get_pos()
-{
-    unsigned char *pos = (uint8_t *)ssfn_dst.ptr + ssfn_dst.y * ssfn_dst.p + ssfn_dst.x * sizeof(uint32_t);
-    return (void *)pos;
 }
 
 /**
