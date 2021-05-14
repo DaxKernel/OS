@@ -10,12 +10,6 @@
 // Comment out the follow macro definiton to disable unit tests from running
 #define D_UNIT_ENABLED
 
-void print_kernel_end()
-{
-    extern char _kernel_end;
-    printf("_kernel_end = %d\n", &_kernel_end);
-}
-
 void print_header()
 {
     tty_write_string_centered("DAX Operating System");
