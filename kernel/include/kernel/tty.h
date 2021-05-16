@@ -14,4 +14,5 @@ void tty_print_horizontal_rule();
 void tty_write_string_centered(const char *string);
 void tty_setcolor(uint8_t color);
 void tty_print_success(const char *string, const char *success_string);
+void draw_image();
 #endif
