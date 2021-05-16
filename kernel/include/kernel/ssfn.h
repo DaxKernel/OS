@@ -200,10 +200,15 @@ void *ssfn_get_pos()
 /**
  * Pointer to start of current line
  */
-void *ssfn_get_start_of_line()
+void *ssfn_current_line()
 {
     void *result = (char *)ssfn_dst.ptr + ssfn_dst.p * ssfn_dst.y;
     return result;
+}
+
+uint32_t skip_line(const int n)
+{
+    return ssfn_dst.p * n;
 }
 
 /**
@@ -213,7 +218,7 @@ void *ssfn_get_start_of_line()
 void ssfn_clr_line()
 {
     ssfn_dst.x = 0;
-    char *start = (char *)ssfn_get_start_of_line();
+    char *start = (char *)ssfn_current_line();
     const int bytes_per_line = ssfn_dst.p * ssfn_src->height;
     memset(start, 0, bytes_per_line);
 }
