@@ -55,6 +55,7 @@ $(ARCHDIR)/boot/crti.o \
 $(ARCHDIR)/boot/crtbegin.o \
 $(KERNEL_OBJS) \
 $(ARCHDIR)/display/font.o \
+$(ARCHDIR)/display/nyan.o \
 $(INTRPTS_OBJ) \
 $(KBD_OBJS) \
 $(K_DATASTRUCT_OBJS) \
