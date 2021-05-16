@@ -34,12 +34,7 @@
 
 /* error codes */
 #define SSFN_OK 0            /* success */
-#define SSFN_ERR_ALLOC -1    /* allocation error */
-#define SSFN_ERR_BADFILE -2  /* bad SSFN file format */
-#define SSFN_ERR_NOFACE -3   /* no font face selected */
 #define SSFN_ERR_INVINP -4   /* invalid input */
-#define SSFN_ERR_BADSTYLE -5 /* bad style */
-#define SSFN_ERR_BADSIZE -6  /* bad size */
 #define SSFN_ERR_NOGLYPH -7  /* glyph (or kerning info) not found */
 
 /**
