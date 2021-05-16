@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include <kernel/image.h>
+#include <kernel/display/image.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>

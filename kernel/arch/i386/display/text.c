@@ -28,7 +28,7 @@
  *
  */
 
-#include <kernel/text.h>
+#include <kernel/display/text.h>
 #include <stdlib.h>
 #include <string.h>
 

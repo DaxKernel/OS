@@ -3,7 +3,7 @@
 #include <kernel/kbd/kbd_input.h>
 #include <kernel/kbd/key_status.h>
 #include <kernel/panic.h>
-#include <kernel/tty.h>
+#include <kernel/display/tty.h>
 #include <stdbool.h>
 #include <stdint.h>
 

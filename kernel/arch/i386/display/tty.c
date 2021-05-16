@@ -4,11 +4,11 @@
 #include <stddef.h>
 #include <string.h>
 #include <stdlib.h>
-#include <kernel/tty.h>
+#include <kernel/display/tty.h>
 #include <kernel/panic.h>
-#include <kernel/image.h>
+#include <kernel/display/image.h>
 #define SSFN_CONSOLEBITMAP_TRUECOLOR
-#include <kernel/text.h>
+#include <kernel/display/text.h>
 
 void test_draw()
 {
