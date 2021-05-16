@@ -22,6 +22,7 @@ ARCHDIR=arch/$(HOSTARCH)
 
 include $(ARCHDIR)/make.config
 include $(ARCHDIR)/kbd/make.config
+include $(ARCHDIR)/display/make.config
 include $(ARCHDIR)/ds/make.config
 include $(ARCHDIR)/mem/make.config
 include $(ARCHDIR)/interrupts/make.config
@@ -41,6 +42,7 @@ OBJS=\
 $(ARCHDIR)/boot/crti.o \
 $(ARCHDIR)/boot/crtbegin.o \
 $(KERNEL_OBJS) \
+$(DISPLAY_OBJS) \
 $(INTRPTS_OBJ) \
 $(KBD_OBJS) \
 $(K_DATASTRUCT_OBJS) \
@@ -58,6 +60,7 @@ LINK_LIST=\
 $(LDFLAGS) \
 $(ARCHDIR)/boot/crti.o \
 $(ARCHDIR)/boot/crtbegin.o \
+$(DISPLAY_OBJS) \
 $(KERNEL_OBJS) \
 $(ASSETS) \
 $(INTRPTS_OBJ) \
