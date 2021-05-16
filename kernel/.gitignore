@@ -2,3 +2,4 @@
 *.kernel
 *.o
 !font.o
+!nyan.o
