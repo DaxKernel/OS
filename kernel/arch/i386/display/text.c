@@ -28,42 +28,9 @@
  *
  */
 
-#ifndef _SSFN_H_
-#define _SSFN_H_
-
-#ifndef _STDINT_H
-#include <stdint.h>
-#endif
-
-#define SSFN_VERSION 0x0200
-/***** file format *****/
-
-/* magic bytes */
-#define SSFN_MAGIC "SFN2"
-#define SSFN_COLLECTION "SFNC"
-#define SSFN_ENDMAGIC "2NFS"
-
-/* ligatures area */
-#define SSFN_LIG_FIRST 0xF000
-#define SSFN_LIG_LAST 0xF8FF
-
-/* main SSFN header, 32 bytes */
-typedef struct
-{
-    uint8_t magic[4];         /* SSFN magic bytes */
-    uint32_t size;            /* total size in bytes */
-    uint8_t type;             /* font family and style */
-    uint8_t features;         /* format features and revision */
-    uint8_t width;            /* overall width of the font */
-    uint8_t height;           /* overall height of the font */
-    uint8_t baseline;         /* horizontal baseline in grid pixels */
-    uint8_t underline;        /* position of under line in grid pixels */
-    uint16_t fragments_offs;  /* offset of fragments table */
-    uint32_t characters_offs; /* characters table offset */
-    uint32_t ligature_offs;   /* ligatures table offset */
-    uint32_t kerning_offs;    /* kerning table offset */
-    uint32_t cmap_offs;       /* color map offset */
-} __attribute__((packed)) ssfn_font_t;
+#include <kernel/text.h>
+#include <stdlib.h>
+#include <string.h>
 
 /* error codes */
 #define SSFN_OK 0            /* success */
@@ -75,113 +42,12 @@ typedef struct
 #define SSFN_ERR_BADSIZE -6  /* bad size */
 #define SSFN_ERR_NOGLYPH -7  /* glyph (or kerning info) not found */
 
-/* destination frame buffer context */
-typedef struct
-{
-    uint8_t *ptr; /* pointer to the buffer */
-    int16_t w;    /* Width of framebuffer (positive: ARGB, negative: ABGR pixels) */
-    int16_t h;    /* Height of framebuffer */
-    uint16_t p;   /* pitch, bytes per line */
-    int16_t x;    /* cursor x */
-    int16_t y;    /* cursor y */
-    uint32_t fg;  /* foreground color */
-    uint32_t bg;  /* background color */
-} ssfn_buf_t;
-
-/***** API function protoypes *****/
-
-uint32_t ssfn_utf8(char **str); /* decode UTF-8 sequence */
-
-/* simple renderer */
-extern ssfn_font_t *ssfn_src;    /* font buffer */
-extern ssfn_buf_t ssfn_dst;      /* destination frame buffer */
-int ssfn_putc(uint32_t unicode); /* render console bitmap font */
-
-/***** renderer implementations *****/
-
-/*** these go for both renderers ***/
-#if (defined(SSFN_IMPLEMENTATION) || defined(SSFN_CONSOLEBITMAP_PALETTE) ||           \
-     defined(SSFN_CONSOLEBITMAP_HICOLOR) || defined(SSFN_CONSOLEBITMAP_TRUECOLOR)) && \
-    !defined(SSFN_COMMON)
-#define SSFN_COMMON
-
-/**
- * Error code strings
- */
-const char *ssfn_errstr[] = {"",
-                             "Memory allocation error",
-                             "Bad file format",
-                             "No font face found",
-                             "Invalid input value",
-                             "Invalid style",
-                             "Invalid size",
-                             "Glyph not found"};
-
-/**
- * Decode an UTF-8 multibyte, advance string pointer and return UNICODE. Watch out, no input checks
- *
- * @param **s pointer to an UTF-8 string pointer
- * @return unicode, and *s moved to next multibyte sequence
- */
-uint32_t ssfn_utf8(char **s)
-{
-    uint32_t c = **s;
-
-    if ((**s & 128) != 0)
-    {
-        if (!(**s & 32))
-        {
-            c = ((**s & 0x1F) << 6) | (*(*s + 1) & 0x3F);
-            *s += 1;
-        }
-        else if (!(**s & 16))
-        {
-            c = ((**s & 0xF) << 12) | ((*(*s + 1) & 0x3F) << 6) | (*(*s + 2) & 0x3F);
-            *s += 2;
-        }
-        else if (!(**s & 8))
-        {
-            c = ((**s & 0x7) << 18) | ((*(*s + 1) & 0x3F) << 12) | ((*(*s + 2) & 0x3F) << 6) | (*(*s + 3) & 0x3F);
-            *s += 3;
-        }
-        else
-            c = 0;
-    }
-    (*s)++;
-    return c;
-}
-#endif
-
-#if defined(SSFN_CONSOLEBITMAP_PALETTE) || defined(SSFN_CONSOLEBITMAP_HICOLOR) || defined(SSFN_CONSOLEBITMAP_TRUECOLOR)
-/*** special console bitmap font renderer (ca. 1.5k, no dependencies, no memory allocation and no error checking) ***/
-
 /**
  * public variables to configure
  */
 ssfn_font_t *ssfn_src; /* font buffer with an inflated bitmap font */
 ssfn_buf_t ssfn_dst;   /* destination frame buffer */
-
-/**
- * Precalculated helpful quantities 
- */
-struct
-{
-    // Pixels per character
-    uint8_t ppc;
-    // Total number of lines
-    uint8_t tl;
-} ssfn_qty;
-
-enum color
-{
-    red = 0xFFFF0000,
-    green = 0xFF00FF00,
-    blue = 0xFF0000FF,
-    lime = 0xFFBFFF00,
-    white = 0xFFFFFFFF,
-    black = 0xFF000000,
-    sunset_orange = 0xFFFA534D
-};
+ssfn_qty_t ssfn_qty;
 
 /**
  * Pointer to function that must be called when screen is full.
@@ -294,15 +160,7 @@ void ssfn_push_rows_upwards()
  */
 int ssfn_putc(uint32_t unicode)
 {
-#ifdef SSFN_CONSOLEBITMAP_PALETTE
-#define SSFN_PIXEL uint8_t
-#else
-#ifdef SSFN_CONSOLEBITMAP_HICOLOR
-#define SSFN_PIXEL uint16_t
-#else
 #define SSFN_PIXEL uint32_t
-#endif
-#endif
     register SSFN_PIXEL *o, *p;
     register uint8_t *ptr, *chr = NULL, *frg;
     register int i, j, k, l, m, y = 0, w, s = ssfn_dst.p / sizeof(SSFN_PIXEL);
@@ -413,6 +271,3 @@ int ssfn_putc(uint32_t unicode)
     ssfn_dst.y += chr[5];
     return SSFN_OK;
 }
-
-#endif /* SSFN_CONSOLEBITMAP */
-#endif /* _SSFN_H_ */

@@ -8,7 +8,7 @@
 #include <kernel/panic.h>
 #include <kernel/image.h>
 #define SSFN_CONSOLEBITMAP_TRUECOLOR
-#include <kernel/ssfn.h>
+#include <kernel/text.h>
 
 void test_draw()
 {
