@@ -49,13 +49,17 @@ $(D_UNIT_OBJS) \
 $(ARCHDIR)/boot/crtend.o \
 $(ARCHDIR)/boot/crtn.o \
 
+ASSETS=\
+$(ARCHDIR)/display/assets/font.o \
+$(ARCHDIR)/display/assets/nyan.o \
+
+
 LINK_LIST=\
 $(LDFLAGS) \
 $(ARCHDIR)/boot/crti.o \
 $(ARCHDIR)/boot/crtbegin.o \
 $(KERNEL_OBJS) \
-$(ARCHDIR)/display/font.o \
-$(ARCHDIR)/display/nyan.o \
+$(ASSETS) \
 $(INTRPTS_OBJ) \
 $(KBD_OBJS) \
 $(K_DATASTRUCT_OBJS) \
