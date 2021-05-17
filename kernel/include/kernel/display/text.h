@@ -1,5 +1,4 @@
 #include <stdint.h>
-#include <kernel/multiboot.h>
 
 /* destination frame buffer context */
 typedef struct
@@ -64,9 +63,7 @@ extern ssfn_qty_t ssfn_qty;
 
 int ssfn_putc(uint32_t unicode);
 void *ssfn_get_pos();
-void *ssfn_current_line();
-uint32_t skip_line(const int n);
 void ssfn_clr_line();
 void ssfn_backspace();
-void ssfn_from_vesa(multiboot_info_t *mbt, void *font);
+void ssfn_load_font(void *font);
 void ssfn_push_rows_upwards();

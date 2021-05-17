@@ -60,8 +60,8 @@ LINK_LIST=\
 $(LDFLAGS) \
 $(ARCHDIR)/boot/crti.o \
 $(ARCHDIR)/boot/crtbegin.o \
-$(DISPLAY_OBJS) \
 $(KERNEL_OBJS) \
+$(DISPLAY_OBJS) \
 $(ASSETS) \
 $(INTRPTS_OBJ) \
 $(KBD_OBJS) \

@@ -53,7 +53,7 @@ void tty_write_string(const char *data)
 
 void tty_print_seperator()
 {
-    uint32_t *ptr = (uint32_t *)ssfn_current_line();
+    uint32_t *ptr = (uint32_t *)ptr_to_y_pos();
     // Go five rows of pixels down
     ptr = (uint32_t *)((char *)ptr + 5 * vbe_info.pitch);
     for (int i = 0; i < vbe_info.width; ++i, ++ptr)
@@ -124,59 +124,8 @@ void tty_initialize(multiboot_info_t *mbt)
     set_vbe_info(mbt);
     set_color(black, white);
     set_cursor(0, 0);
-    ssfn_from_vesa(mbt, &_binary_unifont_sfn_start);
+    ssfn_load_font(&_binary_unifont_sfn_start);
     screenfull_handler = &tty_push_text_upward;
     tty_print_success("VESA Graphics Driver", "OK");
     // fill_debug_text();
-}
-
-typedef struct
-{
-    uint16_t width;
-    uint16_t height;
-    void *pixels;
-} image_t;
-
-image_t new_image_t(uint16_t width, uint16_t height, void *image)
-{
-    image_t result;
-    result.width = width;
-    result.height = height;
-    result.pixels = image;
-    return result;
-}
-
-image_t get_image()
-{
-    void *image = nyan_cat_image();
-    tga_header_t t = tga_header(image);
-    return new_image_t(t.w, t.h, pixel_data(image));
-}
-
-void *get_start_position()
-{
-    return (char *)ssfn_current_line() + skip_line(5);
-}
-
-int draw_row_of_pixel(void *dest, void *pixel_ptr, const int pixels_per_row)
-{
-    memcpy(dest, pixel_ptr, sizeof(uint32_t) * pixels_per_row);
-    return pixels_per_row;
-}
-
-void draw_row_by_row(image_t image)
-{
-    uint32_t *read = image.pixels;
-    char *write = get_start_position();
-    for (int i = 0; i < image.height; ++i)
-    {
-        read += draw_row_of_pixel(write, read, image.width);
-        write += skip_line(1);
-    }
-}
-
-void draw_image()
-{
-    image_t image = get_image();
-    draw_row_by_row(image);
 }

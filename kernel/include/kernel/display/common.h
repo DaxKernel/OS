@@ -27,3 +27,6 @@ typedef struct
 extern vbe_info_t vbe_info;
 extern position_info_t position;
 extern color_info_t color_info;
+
+void *ptr_to_y_pos();
+uint32_t skip_line(const int n);

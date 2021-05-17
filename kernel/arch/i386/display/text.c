@@ -60,27 +60,13 @@ void *ssfn_get_pos()
 }
 
 /**
- * Pointer to start of current line
- */
-void *ssfn_current_line()
-{
-    void *result = (char *)vbe_info.framebuffer + vbe_info.pitch * position.y;
-    return result;
-}
-
-uint32_t skip_line(const int n)
-{
-    return vbe_info.pitch * n;
-}
-
-/**
  * Clear line pointed by position.y.
  * Puts x-cursor at start of cleared line.
  */
 void ssfn_clr_line()
 {
     position.x = 0;
-    char *start = (char *)ssfn_current_line();
+    char *start = (char *)ptr_to_y_pos();
     const int bytes_per_line = vbe_info.pitch * ssfn_src->height;
     memset(start, 0, bytes_per_line);
 }
@@ -110,17 +96,9 @@ void calculate_ssfn_qty()
  * Initialize ssfn global configuration from multiboot
  * and font.
  */
-void ssfn_from_vesa(multiboot_info_t *mbt, void *font)
+void ssfn_load_font(void *font)
 {
     ssfn_src = (ssfn_font_t *)font;
-    vbe_info.framebuffer = (uint8_t *)(intptr_t)mbt->framebuffer_addr;
-    vbe_info.pitch = mbt->framebuffer_pitch;
-    vbe_info.width = mbt->framebuffer_width;
-    vbe_info.height = mbt->framebuffer_height;
-    color_info.fg = 0xFFFFFFFF;
-    color_info.bg = 0xFF000000;
-    position.x = 0;
-    position.y = 0;
     calculate_ssfn_qty();
 }
 
