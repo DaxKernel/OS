@@ -117,8 +117,8 @@ void ssfn_from_vesa(multiboot_info_t *mbt, void *font)
     vbe_info.pitch = mbt->framebuffer_pitch;
     vbe_info.width = mbt->framebuffer_width;
     vbe_info.height = mbt->framebuffer_height;
-    ssfn_dst.fg = 0xFFFFFFFF;
-    ssfn_dst.bg = 0xFF000000;
+    color_info.fg = 0xFFFFFFFF;
+    color_info.bg = 0xFF000000;
     position.x = 0;
     position.y = 0;
     calculate_ssfn_qty();
@@ -220,12 +220,12 @@ int ssfn_putc(uint32_t unicode)
         frg = (uint8_t *)ssfn_src + (chr[0] & 0x40 ? ((ptr[5] << 24) | (ptr[4] << 16) | (ptr[3] << 8) | ptr[2]) : ((ptr[4] << 16) | (ptr[3] << 8) | ptr[2]));
         if ((frg[0] & 0xE0) != 0x80)
             continue;
-        if (ssfn_dst.bg)
+        if (color_info.bg)
         {
             for (; y < ptr[1] && (!vbe_info.height || position.y + y < vbe_info.height); y++, o += s)
             {
                 for (p = o, j = 0; j < chr[2] && (!w || position.x + j < w); j++, p++)
-                    *p = ssfn_dst.bg;
+                    *p = color_info.bg;
             }
         }
         else
@@ -248,20 +248,20 @@ int ssfn_putc(uint32_t unicode)
                 {
                     if (*frg & m)
                     {
-                        *p = ssfn_dst.fg;
+                        *p = color_info.fg;
                     }
-                    else if (ssfn_dst.bg)
+                    else if (color_info.bg)
                     {
-                        *p = ssfn_dst.bg;
+                        *p = color_info.bg;
                     }
                 }
             }
     }
-    if (ssfn_dst.bg)
+    if (color_info.bg)
         for (; y < chr[3] && (!vbe_info.height || position.y + y < vbe_info.height); y++, o += s)
         {
             for (p = o, j = 0; j < chr[2] && (!w || position.x + j < w); j++, p++)
-                *p = ssfn_dst.bg;
+                *p = color_info.bg;
         }
     position.x += chr[4];
     position.y += chr[5];

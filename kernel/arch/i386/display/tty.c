@@ -65,10 +65,10 @@ void tty_print_seperator()
 
 void tty_print_with_color(const char *string, uint32_t color)
 {
-    const uint32_t current_color = ssfn_dst.fg;
-    ssfn_dst.fg = color;
+    const uint32_t current_color = color_info.fg;
+    color_info.fg = color;
     tty_write_string(string);
-    ssfn_dst.fg = current_color;
+    color_info.fg = current_color;
 }
 
 void tty_print_success(const char *string, const char *success_string)
@@ -90,12 +90,12 @@ void tty_write_string_centered(const char *string)
 
 void tty_print_header()
 {
-    uint32_t color = ssfn_dst.fg;
-    ssfn_dst.fg = sunset_orange;
+    uint32_t color = color_info.fg;
+    color_info.fg = sunset_orange;
     tty_write_string_centered("DAX Operating System");
     tty_write_string_centered("2021 (c)");
     tty_print_seperator();
-    ssfn_dst.fg = color;
+    color_info.fg = color;
 }
 
 void set_vbe_info(multiboot_info_t *mbt)
