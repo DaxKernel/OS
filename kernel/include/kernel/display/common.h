@@ -25,5 +25,5 @@ typedef struct
 } color_info_t;
 
 extern vbe_info_t vbe_info;
-extern position_info_t position_info;
+extern position_info_t position;
 extern color_info_t color_info;
