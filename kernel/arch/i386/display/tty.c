@@ -8,10 +8,15 @@
 #include <kernel/panic.h>
 #include <kernel/display/image.h>
 #include <kernel/display/text.h>
+#include <kernel/display/common.h>
+
+vbe_info_t vbe_info;
+color_info_t color_info;
+position_info_t position;
 
 void test_draw()
 {
-    for (uint32_t *ptr = (uint32_t *)ssfn_dst.ptr, c = 0; c < 10; ++c, ++ptr)
+    for (uint32_t *ptr = (uint32_t *)vbe_info.framebuffer, c = 0; c < 10; ++c, ++ptr)
         *ptr = 0xffff0000;
 }
 
@@ -31,7 +36,7 @@ void tty_insert_char(char c)
 void tty_push_text_upward()
 {
     ssfn_push_rows_upwards();
-    ssfn_dst.y = ssfn_dst.y - ssfn_src->height;
+    position.y = position.y - ssfn_src->height;
     ssfn_clr_line();
 }
 
@@ -50,12 +55,12 @@ void tty_print_seperator()
 {
     uint32_t *ptr = (uint32_t *)ssfn_current_line();
     // Go five rows of pixels down
-    ptr = (uint32_t *)((char *)ptr + 5 * ssfn_dst.p);
-    for (int i = 0; i < ssfn_dst.w; ++i, ++ptr)
+    ptr = (uint32_t *)((char *)ptr + 5 * vbe_info.pitch);
+    for (int i = 0; i < vbe_info.width; ++i, ++ptr)
     {
         *ptr = white;
     }
-    ssfn_dst.y = ssfn_dst.y + ssfn_src->height;
+    position.y = position.y + ssfn_src->height;
 }
 
 void tty_print_with_color(const char *string, uint32_t color)
@@ -78,7 +83,7 @@ void tty_write_string_centered(const char *string)
 {
     const int len = strlen(string);
     const int n_pixel = ssfn_qty.ppc * len;
-    ssfn_dst.x = (ssfn_dst.w - n_pixel) / 2;
+    position.x = (vbe_info.width - n_pixel) / 2;
     tty_write_string(string);
     tty_insert_char('\n');
 }
@@ -93,9 +98,32 @@ void tty_print_header()
     ssfn_dst.fg = color;
 }
 
+void set_vbe_info(multiboot_info_t *mbt)
+{
+    vbe_info.framebuffer = (void *)(intptr_t)mbt->framebuffer_addr;
+    vbe_info.height = mbt->framebuffer_height;
+    vbe_info.width = mbt->framebuffer_width;
+    vbe_info.pitch = mbt->framebuffer_pitch;
+}
+
+void set_color(uint32_t bg, uint32_t fg)
+{
+    color_info.bg = bg;
+    color_info.fg = fg;
+}
+
+void set_cursor(uint16_t x, uint16_t y)
+{
+    position.x = x;
+    position.y = y;
+}
+
 void tty_initialize(multiboot_info_t *mbt)
 {
     extern char _binary_unifont_sfn_start;
+    set_vbe_info(mbt);
+    set_color(black, white);
+    set_cursor(0, 0);
     ssfn_from_vesa(mbt, &_binary_unifont_sfn_start);
     screenfull_handler = &tty_push_text_upward;
     tty_print_success("VESA Graphics Driver", "OK");

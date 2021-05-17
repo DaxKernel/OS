@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <kernel/multiboot.h>
+
 /* destination frame buffer context */
 typedef struct
 {

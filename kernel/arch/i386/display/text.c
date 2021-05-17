@@ -29,6 +29,7 @@
  */
 
 #include <kernel/display/text.h>
+#include <kernel/display/common.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -54,7 +55,7 @@ void (*screenfull_handler)();
  */
 void *ssfn_get_pos()
 {
-    unsigned char *pos = (uint8_t *)ssfn_dst.ptr + ssfn_dst.y * ssfn_dst.p + ssfn_dst.x * sizeof(uint32_t);
+    unsigned char *pos = (uint8_t *)vbe_info.framebuffer + position.y * vbe_info.pitch + position.x * sizeof(uint32_t);
     return (void *)pos;
 }
 
@@ -63,24 +64,24 @@ void *ssfn_get_pos()
  */
 void *ssfn_current_line()
 {
-    void *result = (char *)ssfn_dst.ptr + ssfn_dst.p * ssfn_dst.y;
+    void *result = (char *)vbe_info.framebuffer + vbe_info.pitch * position.y;
     return result;
 }
 
 uint32_t skip_line(const int n)
 {
-    return ssfn_dst.p * n;
+    return vbe_info.pitch * n;
 }
 
 /**
- * Clear line pointed by ssfn_dst.y.
+ * Clear line pointed by position.y.
  * Puts x-cursor at start of cleared line.
  */
 void ssfn_clr_line()
 {
-    ssfn_dst.x = 0;
+    position.x = 0;
     char *start = (char *)ssfn_current_line();
-    const int bytes_per_line = ssfn_dst.p * ssfn_src->height;
+    const int bytes_per_line = vbe_info.pitch * ssfn_src->height;
     memset(start, 0, bytes_per_line);
 }
 
@@ -89,20 +90,20 @@ void ssfn_clr_line()
  */
 void ssfn_backspace()
 {
-    ssfn_dst.x = ssfn_dst.x - ssfn_qty.ppc;
-    uint32_t *start = (uint32_t *)(ssfn_dst.ptr + ssfn_dst.y * ssfn_dst.p + ssfn_dst.x * 4);
+    position.x = position.x - ssfn_qty.ppc;
+    uint32_t *start = (uint32_t *)(vbe_info.framebuffer + position.y * vbe_info.pitch + position.x * 4);
     uint32_t *ptr = start;
     for (uint8_t i = 0; i < ssfn_src->height; ++i)
     {
         memset(ptr, 0, ssfn_qty.ppc * 4);
-        ptr = start + (i + 1) * (ssfn_dst.p / 4);
+        ptr = start + (i + 1) * (vbe_info.pitch / 4);
     }
 }
 
 void calculate_ssfn_qty()
 {
     ssfn_qty.ppc = ssfn_src->width / 2;
-    ssfn_qty.tl = ssfn_dst.h / ssfn_src->height;
+    ssfn_qty.tl = vbe_info.height / ssfn_src->height;
 }
 
 /**
@@ -112,14 +113,14 @@ void calculate_ssfn_qty()
 void ssfn_from_vesa(multiboot_info_t *mbt, void *font)
 {
     ssfn_src = (ssfn_font_t *)font;
-    ssfn_dst.ptr = (uint8_t *)(intptr_t)mbt->framebuffer_addr;
-    ssfn_dst.p = mbt->framebuffer_pitch;
-    ssfn_dst.w = mbt->framebuffer_width;
-    ssfn_dst.h = mbt->framebuffer_height;
+    vbe_info.framebuffer = (uint8_t *)(intptr_t)mbt->framebuffer_addr;
+    vbe_info.pitch = mbt->framebuffer_pitch;
+    vbe_info.width = mbt->framebuffer_width;
+    vbe_info.height = mbt->framebuffer_height;
     ssfn_dst.fg = 0xFFFFFFFF;
     ssfn_dst.bg = 0xFF000000;
-    ssfn_dst.x = 0;
-    ssfn_dst.y = 0;
+    position.x = 0;
+    position.y = 0;
     calculate_ssfn_qty();
 }
 
@@ -128,8 +129,8 @@ void ssfn_from_vesa(multiboot_info_t *mbt, void *font)
  */
 void handle_screenful()
 {
-    const int skip = ssfn_dst.p * ssfn_dst.h;
-    const unsigned char *end = (uint8_t *)ssfn_dst.ptr + skip;
+    const int skip = vbe_info.pitch * vbe_info.height;
+    const unsigned char *end = (uint8_t *)vbe_info.framebuffer + skip;
     const unsigned char *pos = ssfn_get_pos();
     if (pos >= end)
     {
@@ -142,9 +143,9 @@ void handle_screenful()
  */
 void ssfn_push_rows_upwards()
 {
-    unsigned char *second_line = ssfn_dst.ptr + ssfn_dst.p * ssfn_src->height;
-    const int n = ssfn_dst.p * (ssfn_dst.h - ssfn_src->height);
-    memmove(ssfn_dst.ptr, second_line, n);
+    unsigned char *second_line = vbe_info.framebuffer + vbe_info.pitch * ssfn_src->height;
+    const int n = vbe_info.pitch * (vbe_info.height - ssfn_src->height);
+    memmove(vbe_info.framebuffer, second_line, n);
 }
 
 /**
@@ -158,17 +159,17 @@ int ssfn_putc(uint32_t unicode)
 #define SSFN_PIXEL uint32_t
     register SSFN_PIXEL *o, *p;
     register uint8_t *ptr, *chr = NULL, *frg;
-    register int i, j, k, l, m, y = 0, w, s = ssfn_dst.p / sizeof(SSFN_PIXEL);
+    register int i, j, k, l, m, y = 0, w, s = vbe_info.pitch / sizeof(SSFN_PIXEL);
 
     if (!ssfn_src || ssfn_src->magic[0] != 'S' || ssfn_src->magic[1] != 'F' || ssfn_src->magic[2] != 'N' ||
-        ssfn_src->magic[3] != '2' || !ssfn_dst.ptr || !ssfn_dst.p)
+        ssfn_src->magic[3] != '2' || !vbe_info.framebuffer || !vbe_info.pitch)
         return SSFN_ERR_INVINP;
     if (unicode == '\r' || unicode == '\n')
     {
-        ssfn_dst.x = 0;
+        position.x = 0;
         if (unicode == '\n')
         {
-            ssfn_dst.y += ssfn_src->height;
+            position.y += ssfn_src->height;
             handle_screenful();
         }
         return SSFN_OK;
@@ -178,7 +179,7 @@ int ssfn_putc(uint32_t unicode)
         ssfn_backspace();
         return SSFN_OK;
     }
-    w = ssfn_dst.w < 0 ? -ssfn_dst.w : ssfn_dst.w;
+    w = vbe_info.width;
     for (ptr = (uint8_t *)ssfn_src + ssfn_src->characters_offs, i = 0; i < 0x110000; i++)
     {
         if (ptr[0] == 0xFF)
@@ -211,7 +212,7 @@ int ssfn_putc(uint32_t unicode)
     if (!chr)
         return SSFN_ERR_NOGLYPH;
     ptr = chr + 6;
-    o = (SSFN_PIXEL *)((uint8_t *)ssfn_dst.ptr + ssfn_dst.y * ssfn_dst.p + ssfn_dst.x * sizeof(SSFN_PIXEL));
+    o = (SSFN_PIXEL *)((uint8_t *)vbe_info.framebuffer + position.y * vbe_info.pitch + position.x * sizeof(SSFN_PIXEL));
     for (i = 0; i < chr[1]; i++, ptr += chr[0] & 0x40 ? 6 : 5)
     {
         if (ptr[0] == 255 && ptr[1] == 255)
@@ -221,9 +222,9 @@ int ssfn_putc(uint32_t unicode)
             continue;
         if (ssfn_dst.bg)
         {
-            for (; y < ptr[1] && (!ssfn_dst.h || ssfn_dst.y + y < ssfn_dst.h); y++, o += s)
+            for (; y < ptr[1] && (!vbe_info.height || position.y + y < vbe_info.height); y++, o += s)
             {
-                for (p = o, j = 0; j < chr[2] && (!w || ssfn_dst.x + j < w); j++, p++)
+                for (p = o, j = 0; j < chr[2] && (!w || position.x + j < w); j++, p++)
                     *p = ssfn_dst.bg;
             }
         }
@@ -235,7 +236,7 @@ int ssfn_putc(uint32_t unicode)
         k = ((frg[0] & 0x1F) + 1) << 3;
         j = frg[1] + 1;
         frg += 2;
-        for (m = 1; j && (!ssfn_dst.h || ssfn_dst.y + y < ssfn_dst.h); j--, y++, o += s)
+        for (m = 1; j && (!vbe_info.height || position.y + y < vbe_info.height); j--, y++, o += s)
             for (p = o, l = 0; l < k; l++, p++, m <<= 1)
             {
                 if (m > 0x80)
@@ -243,7 +244,7 @@ int ssfn_putc(uint32_t unicode)
                     frg++;
                     m = 1;
                 }
-                if (ssfn_dst.x + l >= 0 && (!w || ssfn_dst.x + l < w))
+                if (position.x + l >= 0 && (!w || position.x + l < w))
                 {
                     if (*frg & m)
                     {
@@ -257,12 +258,12 @@ int ssfn_putc(uint32_t unicode)
             }
     }
     if (ssfn_dst.bg)
-        for (; y < chr[3] && (!ssfn_dst.h || ssfn_dst.y + y < ssfn_dst.h); y++, o += s)
+        for (; y < chr[3] && (!vbe_info.height || position.y + y < vbe_info.height); y++, o += s)
         {
-            for (p = o, j = 0; j < chr[2] && (!w || ssfn_dst.x + j < w); j++, p++)
+            for (p = o, j = 0; j < chr[2] && (!w || position.x + j < w); j++, p++)
                 *p = ssfn_dst.bg;
         }
-    ssfn_dst.x += chr[4];
-    ssfn_dst.y += chr[5];
+    position.x += chr[4];
+    position.y += chr[5];
     return SSFN_OK;
 }
