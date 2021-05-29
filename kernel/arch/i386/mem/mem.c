@@ -2,6 +2,7 @@
 #include <kernel/mem/p_stack.h>
 #include <kernel/mem/mmap.h>
 #include <kernel/mem/f_size.h>
+#include <kernel/display/tty.h>
 #include <stddef.h>
 
 extern char _kernel_end;
@@ -12,6 +13,7 @@ void init_mem(multiboot_info_t* mbt){
     set_multiboot_info_t(mbt);
     parse_available_mem();
     allocate_buffer();
+    tty_print_success("Memory Management", "OK");
 }
 
 void push_frames(mmap_entry_t *entry){
