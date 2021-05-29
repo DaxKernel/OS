@@ -1,11 +1,12 @@
 #include <stdio.h>
-#include <kernel/tty.h>
+#include <kernel/display/tty.h>
 #include <kernel/kbd/device.h>
 #include <d_unit/d_unit.h>
 #include <kernel/interrupt/interrupts.h>
 #include <kernel/gdt.h>
 #include <kernel/multiboot_32.h>
 #include <kernel/mem/mem.h>
+#include <kernel/repl.h>
 
 // Comment out the follow macro definiton to disable unit tests from running
 #define D_UNIT_ENABLED
@@ -32,4 +33,6 @@ void kernel_main(multiboot_info_t *mbt, unsigned int magic)
 #ifdef D_UNIT_ENABLED
     D_UNIT_run();
 #endif
+    accept_commands();
+    //draw_image();
 }
