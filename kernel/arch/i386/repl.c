@@ -15,7 +15,6 @@ void repl(){
         tty_print_rainbow("Hello from the world of DaxOS!");
     }
     tty_insert_char('\n');
-    tty_insert_char('\n');
 }
 
 void accept_commands(){
