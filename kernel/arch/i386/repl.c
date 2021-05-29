@@ -21,6 +21,16 @@ void repl(){
     else if(strcmp(command, "panic") == 0){
         k_panic("This is a demo of a panic() in DaxOS.");
     }
+    else if(strcmp(command, "repeat") == 0){
+        char rep[100];
+        printf("What do you want to repeat?\n");
+        scanf("%s", &rep);
+        printf("You wrote: %s", rep);
+    }
+    else {
+        printf("%s command not found!!", command);
+    }
+    tty_insert_char('\n');
     tty_insert_char('\n');
 }
 
