@@ -9,7 +9,7 @@ inline unsigned char inportb(unsigned int port)
     return ret;
 }
 
-inline void outportb(unsigned int port, unsigned char value)
+inline void outportb(unsigned int port, unsigned int value)
 {
     asm volatile("outb %%al,%%dx"
                  :

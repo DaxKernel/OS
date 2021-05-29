@@ -8,4 +8,4 @@ Useful for implementing drivers
 
 unsigned char inportb(unsigned int port);
 
-void outportb(unsigned int port, unsigned char value);
+void outportb(unsigned int port, unsigned int value);
