@@ -23,16 +23,21 @@ void init_descriptors()
     idt_init();
 }
 
-void kernel_main(multiboot_info_t *mbt, unsigned int magic)
-{
-    init_descriptors();
-    init_mem(mbt);
-    init_devices(mbt);
-    verify_multiboot(magic, mbt);
-    tty_print_header();
+void run_unit_tests(){
 #ifdef D_UNIT_ENABLED
     D_UNIT_run();
 #endif
+    tty_insert_char('\n');
+}
+
+void kernel_main(multiboot_info_t *mbt, unsigned int magic)
+{
+    init_descriptors();
+    init_devices(mbt);
+    init_mem(mbt);
+    verify_multiboot(magic, mbt);
+    tty_print_header();
+    run_unit_tests();
     accept_commands();
     //draw_image();
 }
