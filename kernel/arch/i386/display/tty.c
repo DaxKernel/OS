@@ -20,6 +20,10 @@ void test_draw()
         *ptr = 0xffff0000;
 }
 
+void tty_clear(){
+    memset(vbe_info.framebuffer, 0, vbe_info.height * vbe_info.width * sizeof(uint32_t));
+}
+
 void fill_debug_text()
 {
     for (int i = 0; i < ssfn_qty.tl - 11; ++i)

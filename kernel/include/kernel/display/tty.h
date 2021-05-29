@@ -7,12 +7,14 @@
 
 void tty_initialize(multiboot_info_t *mbt);
 void tty_print_header();
-void tty_put_char(char c);
+void tty_insert_char(char c);
 void tty_write(const char *data, size_t size);
 void tty_write_string(const char *data);
 void tty_print_horizontal_rule();
 void tty_write_string_centered(const char *string);
 void tty_setcolor(uint8_t color);
 void tty_print_success(const char *string, const char *success_string);
+void tty_clear();
+void tty_print_seperator();
 void draw_image();
 #endif
