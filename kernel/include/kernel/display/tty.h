@@ -16,5 +16,7 @@ void tty_setcolor(uint8_t color);
 void tty_print_success(const char *string, const char *success_string);
 void tty_clear();
 void tty_print_seperator();
+void tty_print_with_color(const char *string, uint32_t color);
+void tty_print_rainbow(const char *string);
 void draw_image();
 #endif

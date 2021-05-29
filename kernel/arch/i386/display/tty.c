@@ -20,7 +20,8 @@ void test_draw()
         *ptr = 0xffff0000;
 }
 
-void tty_clear(){
+void tty_clear()
+{
     memset(vbe_info.framebuffer, 0, vbe_info.height * vbe_info.width * sizeof(uint32_t));
 }
 
@@ -73,6 +74,19 @@ void tty_print_with_color(const char *string, uint32_t color)
     color_info.fg = color;
     tty_write_string(string);
     color_info.fg = current_color;
+}
+
+void tty_print_rainbow(const char *string)
+{
+    uint32_t colors[] = {0xffff0000, 0xffffa500, 0xffffff00, 0xff008000, 0xff0000ff, 0xff4b0082, 0xffee82ee};
+    const int color_size = 7;
+    for (int i = 0; i < strlen(string); ++i)
+    {
+        char s[2];
+        s[0] = string[i];
+        s[1] = '\0';
+        tty_print_with_color(s, colors[i % color_size]);
+    }
 }
 
 void tty_print_success(const char *string, const char *success_string)
