@@ -29,4 +29,5 @@ void draw_image()
 {
     image_t image = get_image();
     draw_row_by_row(image);
+    position.y += image.height;
 }
