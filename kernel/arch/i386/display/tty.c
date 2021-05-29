@@ -80,7 +80,7 @@ void tty_print_rainbow(const char *string)
 {
     uint32_t colors[] = {0xffff0000, 0xffffa500, 0xffffff00, 0xff008000, 0xff0000ff, 0xff4b0082, 0xffee82ee};
     const int color_size = 7;
-    for (int i = 0; i < strlen(string); ++i)
+    for (size_t i = 0; i < strlen(string); ++i)
     {
         char s[2];
         s[0] = string[i];
