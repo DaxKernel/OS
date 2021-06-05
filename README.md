@@ -12,3 +12,5 @@ DaxOS is a hobbyist operating system made for pedagogical purposes.
 - VGA Terminal Driver
 - PS/2 Keyboard Driver
 - Memory Management
+- Graphics Support
+- Image Support
